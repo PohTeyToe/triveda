@@ -57,6 +57,39 @@ All credentials in `.env.local` (gitignored). See `.env.example` for required va
 - No em-dashes in prose
 - No box-drawing characters in tables
 
+## Implementation Progress
+
+Planning docs at `C:\VJDS-triveda-planning\` -- 14 splits, 135 sections, 3 amendment files.
+
+| Split | Status | Sections | Notes |
+|-|-|-|-|
+| 01-foundation | Complete | 9/9 | Monorepo, React app, Hono API, Supabase, CI/CD |
+| 02-deterministic-engines | Complete | 8/8 | 308 tests. All 5 engines + convergence + integration tests |
+| 03-food-herb-database | In progress | 2/10 | Schemas + migrations done. Client factory, seed pipeline remaining |
+| 04-scoring-engine | Not started | 0/10 | Blocked on split 03 |
+| 05-llm-orchestration | In progress | 6/9 | Types, prompts, caller, telemetry, mocks, sanitizer. Orchestrator + streaming remaining |
+| 06-backend-api | Not started | 0/10 | Blocked on 04+05 |
+| 07-13 frontend | Not started | 0/73 | Blocked on 06 |
+| 14-testing-deploy | Not started | 0/14 | Blocked on all |
+
+### Amendments (must-read for implementers)
+
+- `C:\VJDS-triveda-planning\amendments\001-missing-schemas-endpoints.md` -- user_profiles, 13 missing endpoints, auth UI, migration numbering, 6 tables
+- `C:\VJDS-triveda-planning\amendments\002-architecture-fixes.md` -- Vercel middleware, snake_case mapper, resvg-wasm, AppType location
+- `C:\VJDS-triveda-planning\amendments\003-risks-and-improvements.md` -- rate limiter, LLM code location, herb adapter, demo fixtures, credit registry
+
+### Decisions Made During Implementation
+
+| Decision | Rationale |
+|-|-|
+| Render not Railway | Railway free tier maxed. Render service: srv-d7drs21kh4rs73a0a250 |
+| AppYo Supabase account | Main account full. Use SUPABASE_APPYO_ACCESS_TOKEN for Triveda |
+| LLM runtime in apps/api | packages/shared has types only. Runtime in apps/api/src/llm/ |
+| AppType stays in apps/api | Not in packages/shared (avoids circular dep) |
+| snake_case in DB types | Mapper in split 06 converts to camelCase for scoring |
+| drizzle-zod uses zod/v4 | drizzle-zod 0.8.3 internal import path |
+| Migration ranges | 03: 0001-0009, 06: 0010-0019, 10: 0020-0029, 12: 0030-0039, 11: 0040-0049 |
+
 ## Key Decisions
 
 | Decision | Rationale |
