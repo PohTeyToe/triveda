@@ -71,6 +71,14 @@ export {
 // Seasonal engine (split 02)
 export { getSeasonalContext, getNextRitu, getPreviousRitu } from './seasonal.js';
 
+// Constitutional engine (split 02)
+export {
+  scoreConstitution,
+  classifyDosha,
+  computeConfidence,
+  generateSummary,
+} from './constitutional.js';
+
 // Legacy interface stubs (from split 01 -- retained for compatibility)
 export type { Season, SeasonEngine } from './season.js';
 export type {
