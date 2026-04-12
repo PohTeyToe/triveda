@@ -30,3 +30,12 @@ body:not(.dark body) {
   background-color: var(--color-light);
   color: var(--color-dark);
 }
+
+/* Scrollbar hide utility for credit row horizontal scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
