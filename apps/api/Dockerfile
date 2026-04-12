@@ -19,6 +19,7 @@ RUN pnpm --filter @triveda/api build
 FROM oven/bun:1.3-slim
 WORKDIR /app
 COPY --from=builder /app/apps/api/dist ./
+COPY --from=builder /app/apps/api/assets ./assets
 COPY --from=builder /app/node_modules ./node_modules
 EXPOSE 3001
 CMD ["bun", "run", "index.js"]

@@ -6,16 +6,21 @@ import { errorHandler } from './middleware/error.js';
 import { rateLimit } from './middleware/rate-limit.js';
 import { requestId } from './middleware/request-id.js';
 import { telemetry } from './middleware/telemetry.js';
+import { bloodWork } from './routes/blood-work.js';
 import { browse } from './routes/browse.js';
 import { checkIn } from './routes/check-in.js';
+import { constitutionMeta } from './routes/constitution-meta.js';
 import { constitution } from './routes/constitution.js';
 import { dailyFood } from './routes/daily-food.js';
 import { faceScan } from './routes/face-scan.js';
 import { feedbackRoute } from './routes/food-feedback.js';
 import { health } from './routes/health.js';
+import { ogRouter } from './routes/og.js';
 import { profile } from './routes/profile.js';
 import { seasonal } from './routes/seasonal.js';
+import { triggeredRecs } from './routes/triggered-recs.js';
 import { weather } from './routes/weather.js';
+import { weeklyHerb } from './routes/weekly-herb.js';
 
 /**
  * Create and configure the OpenAPIHono application with full middleware chain.
@@ -57,6 +62,8 @@ export function createApp() {
   // --- Public routes (no auth) ---
   app.route('/healthz', health);
   app.route('/weather', weather);
+  app.route('/api/og', ogRouter);
+  app.route('/api/v1/constitution', constitutionMeta);
 
   // 6. Auth middleware for all other routes
   app.use('/api/*', auth);
@@ -70,6 +77,9 @@ export function createApp() {
   app.route('/api/v1/profile', profile);
   app.route('/api/v1/face-scan', faceScan);
   app.route('/api/v1/seasonal-transition', seasonal);
+  app.route('/api/v1/blood-work', bloodWork);
+  app.route('/api/v1/weekly-herb', weeklyHerb);
+  app.route('/api/v1/triggered-recs', triggeredRecs);
 
   // --- OpenAPI documentation (non-production only) ---
   const isProduction = process.env.NODE_ENV === 'production';

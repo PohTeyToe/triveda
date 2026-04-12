@@ -4,6 +4,7 @@
     "noEmit": true,
     "declaration": false,
     "declarationMap": false,
+    "jsx": "react-jsx",
     "types": ["bun-types"]
   },
   "include": ["src", "tests"],
