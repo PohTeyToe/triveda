@@ -6,8 +6,8 @@
  * modules in later sections.
  */
 
-import type { TraditionProviderMap, TraditionType } from '@triveda/shared/llm/types.js';
-import { DEFAULT_PROVIDER_MAP } from '@triveda/shared/llm/types.js';
+import type { TraditionProviderMap, TraditionType } from '@triveda/shared/src/llm/types.js';
+import { DEFAULT_PROVIDER_MAP } from '@triveda/shared/src/llm/types.js';
 
 // ---------------------------------------------------------------------------
 // Cost rates (USD per 1M tokens, as of 2026-04)

@@ -9,7 +9,7 @@
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createVertex } from '@ai-sdk/google-vertex';
-import type { TraditionType } from '@triveda/shared/llm/types.js';
+import type { TraditionType } from '@triveda/shared/src/llm/types.js';
 import type { LanguageModelV1 } from 'ai';
 
 // ---------------------------------------------------------------------------
