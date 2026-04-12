@@ -8,9 +8,11 @@
     "typecheck": "tsc --build",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx migrate.ts"
+    "db:migrate": "tsx migrate.ts",
+    "db:seed": "tsx src/seed/run-seed.ts"
   },
   "dependencies": {
+    "dotenv": "^16.6.1",
     "drizzle-orm": "^0.45.0",
     "drizzle-zod": "^0.8.3",
     "postgres": "^3.4.0",

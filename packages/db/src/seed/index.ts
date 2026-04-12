@@ -43,3 +43,7 @@ export {
   CANONICAL_EVIDENCE_CLAIMS,
 } from './evidence-seeder.js';
 export type { EvidenceLevel, EvidenceClaimEntry } from './evidence-seeder.js';
+
+// Orchestrator
+export { runFullSeed } from './orchestrator.js';
+export type { SeedResult, SeedPhaseResult } from './orchestrator.js';
