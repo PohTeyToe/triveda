@@ -29,7 +29,15 @@ import type {
   WeatherInput,
   WeatherResult,
 } from '../engines/index.js';
-import type { LLMProvider, TraditionOrchestrator } from '../llm/index.js';
+import type {
+  AyurvedaInput,
+  AyurvedaOutput,
+  CircuitBreakerConfig,
+  DailyFoodInput,
+  DailyFoodLLMResult,
+  SSEEvent,
+  TraditionType,
+} from '../llm/index.js';
 import type { TelemetryLogger } from '../telemetry.js';
 
 /**
@@ -107,11 +115,21 @@ describe('type imports', () => {
     expect(_cvr).toBeUndefined();
   });
 
-  it('LLM interfaces are importable as types', () => {
-    const _provider: LLMProvider | undefined = undefined;
-    const _orchestrator: TraditionOrchestrator | undefined = undefined;
+  it('LLM types are importable', () => {
+    const _tradition: TraditionType | undefined = undefined;
+    const _ayurvedaIn: AyurvedaInput | undefined = undefined;
+    const _ayurvedaOut: AyurvedaOutput | undefined = undefined;
+    const _dailyInput: DailyFoodInput | undefined = undefined;
+    const _dailyResult: DailyFoodLLMResult | undefined = undefined;
+    const _event: SSEEvent | undefined = undefined;
+    const _circuit: CircuitBreakerConfig | undefined = undefined;
 
-    expect(_provider).toBeUndefined();
-    expect(_orchestrator).toBeUndefined();
+    expect(_tradition).toBeUndefined();
+    expect(_ayurvedaIn).toBeUndefined();
+    expect(_ayurvedaOut).toBeUndefined();
+    expect(_dailyInput).toBeUndefined();
+    expect(_dailyResult).toBeUndefined();
+    expect(_event).toBeUndefined();
+    expect(_circuit).toBeUndefined();
   });
 });

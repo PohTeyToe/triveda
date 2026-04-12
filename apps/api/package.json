@@ -14,10 +14,13 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.69",
+    "@ai-sdk/google-vertex": "^4.0.108",
     "@hono/zod-openapi": "0.18.4",
     "@hono/zod-validator": "^0.7.6",
     "@triveda/db": "workspace:*",
     "@triveda/shared": "workspace:*",
+    "ai": "^6.0.158",
     "hono": "^4.12.12",
     "hono-rate-limiter": "^0.5.3",
     "jose": "^6.2.2",

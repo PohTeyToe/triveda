@@ -89,15 +89,40 @@ export {
   linearInterpolate,
 } from './engines/index.js';
 
-// LLM interfaces (types/schemas only -- runtime lives in apps/api)
+// LLM types and schemas (runtime lives in apps/api/src/llm/)
 export type {
-  LLMOptions,
-  LLMUsage,
-  LLMResponse,
-  LLMProvider,
   TraditionType,
-  AnalysisInput,
-  TraditionAnalysisResult,
-  TraditionAnalysis,
-  TraditionOrchestrator,
+  AyurvedaInput,
+  TCMInput,
+  NaturopathyInput,
+  SynthesisInput,
+  AyurvedaOutput,
+  TCMOutput,
+  NaturopathyOutput,
+  SynthesisOutput,
+  DailyFoodInput,
+  DailyFoodLLMResult,
+  OrchestrationMetadata,
+  CallMetadata,
+  TraditionCallResult,
+  TraditionCallErrorCause,
+  CircuitState,
+  CircuitBreakerConfig,
+  CircuitBreakerState,
+  ProviderDegradationEvent,
+  CostEstimate,
+  TotalCostEstimate,
+  SSEEvent,
+  SSEEventType,
+  ProviderConfig,
+  TraditionProviderMap,
+} from './llm/index.js';
+
+export { TraditionCallError, DEFAULT_PROVIDER_MAP } from './llm/index.js';
+
+export {
+  ayurvedaOutputSchema,
+  tcmOutputSchema,
+  naturopathyOutputSchema,
+  synthesisOutputSchema,
 } from './llm/index.js';
