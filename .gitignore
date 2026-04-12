@@ -11,3 +11,5 @@ coverage/
 # TanStack Router generated
 routeTree.gen.ts
 .tanstack/
+
+.vercel
