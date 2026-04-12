@@ -7,3 +7,7 @@ playwright-report/
 coverage/
 *.tsbuildinfo
 .turbo/
+
+# TanStack Router generated
+routeTree.gen.ts
+.tanstack/

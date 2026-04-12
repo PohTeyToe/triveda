@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-teal: #14b8a6;
+  --color-teal-soft: #0d9488;
+  --color-dark: #0a0a0a;
+  --color-dark-elevated: #111111;
+  --color-dark-surface: #1a1a1a;
+  --color-dark-border: #2a2a2a;
+  --color-light: #fdfcf9;
+  --color-light-muted: #f5f3ee;
+  --color-green: #22c55e;
+  --color-terracotta: #ed7523;
+  --color-sage: #6b8156;
+  --font-heading: "Crimson Pro", serif;
+  --font-body: "DM Sans", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Dark mode defaults — light mode overrides */
+.dark body {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+}
+
+body:not(.dark body) {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
