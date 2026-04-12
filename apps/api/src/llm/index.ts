@@ -77,3 +77,10 @@ export {
 
 // Section 04: Orchestrator
 export { orchestrateDailyFood } from './orchestrator.js';
+
+// Section 09: SSE streaming
+export {
+  createSSEStream,
+  createNonStreamingResponse,
+  type SSEOutputEvent,
+} from './streaming.js';
