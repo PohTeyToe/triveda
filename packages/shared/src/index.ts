@@ -167,4 +167,12 @@ export {
   FoodForScoringSchema,
   FoodFeedbackSchema,
   ModifierValuesSchema,
+  // Score composition, credits, explain, telemetry
+  scoreFood,
+  scoreCandidates,
+  selectTopN,
+  emitCredits,
+  ALWAYS_ACTIVE_COUNT,
+  explainScore,
+  buildTelemetry,
 } from './scoring/index.js';
