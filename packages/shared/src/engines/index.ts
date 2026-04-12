@@ -92,10 +92,11 @@ export type {
   AyurvedicQualities,
   WeatherMapper,
 } from './weather.js';
-export type {
-  TraditionRecommendation,
-  ConvergenceDetector,
+// Convergence detector (split 02)
+export {
+  computeConvergence,
+  thermalAgreement,
+  constitutionalAgreement,
+  seasonalAgreement,
+  evidenceAgreement,
 } from './convergence.js';
-// Note: ConvergenceResult from convergence.js conflicts with types.ts.
-// The new ConvergenceResult from types.ts is the canonical version.
-// Import the legacy one directly from './convergence.js' if needed.
