@@ -46,7 +46,7 @@ describe('filterRestrictions', () => {
     const foods = [makeFood('1', ['grain', 'vegetable'])];
     const result = filterRestrictions(foods, ['dairy']);
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('1');
+    expect(result[0]?.id).toBe('1');
   });
 
   it('multiple restrictions [dairy, gluten], food matching one (dairy) -> filtered out', () => {
@@ -78,7 +78,7 @@ describe('filterRestrictions', () => {
     const foods: FoodForScoring[] = [];
     for (let i = 0; i < 50; i++) {
       // Every 3rd food has a restricted tag
-      const tags = i % 3 === 0 ? [restrictions[i % 5]] : ['vegetable'];
+      const tags = i % 3 === 0 ? [restrictions[i % 5] ?? 'dairy'] : ['vegetable'];
       foods.push(makeFood(String(i), tags));
     }
     const result = filterRestrictions(foods, restrictions);

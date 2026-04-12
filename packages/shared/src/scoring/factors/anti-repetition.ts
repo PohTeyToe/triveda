@@ -44,7 +44,8 @@ export function antiRepetitionScore(
   // Sort by date descending (ISO 8601 sorts lexicographically)
   matches.sort((a, b) => (a.date > b.date ? -1 : a.date < b.date ? 1 : 0));
 
-  const mostRecent = matches[0];
+  // biome-ignore lint/style/noNonNullAssertion: length checked above
+  const mostRecent = matches[0]!;
   const daysAgo = daysBetween(today, mostRecent.date);
 
   // Hard rejection within window
@@ -75,7 +76,7 @@ function isLeapYear(year: number): boolean {
 
 function daysInMonth(year: number, month: number): number {
   if (month === 2 && isLeapYear(year)) return 29;
-  return DAYS_IN_MONTH[month - 1];
+  return DAYS_IN_MONTH[month - 1] ?? 30;
 }
 
 /**
@@ -87,9 +88,9 @@ function daysInMonth(year: number, month: number): number {
  */
 function toJulianDay(dateStr: string): number {
   const parts = dateStr.split('-');
-  const year = Number.parseInt(parts[0], 10);
-  const month = Number.parseInt(parts[1], 10);
-  const day = Number.parseInt(parts[2], 10);
+  const year = Number.parseInt(parts[0] ?? '0', 10);
+  const month = Number.parseInt(parts[1] ?? '1', 10);
+  const day = Number.parseInt(parts[2] ?? '1', 10);
 
   // Count days from year 0
   let total = 0;

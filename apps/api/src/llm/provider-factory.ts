@@ -10,7 +10,7 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createVertex } from '@ai-sdk/google-vertex';
 import type { TraditionType } from '@triveda/shared/src/llm/types.js';
-import type { LanguageModelV1 } from 'ai';
+import type { LanguageModel } from 'ai';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -43,7 +43,7 @@ function requireEnv(name: string): string {
  *
  * Env vars are read at call time, not module load time.
  */
-export function getModelForTradition(tradition: TraditionType): LanguageModelV1 {
+export function getModelForTradition(tradition: TraditionType): LanguageModel {
   switch (tradition) {
     case 'ayurveda':
     case 'tcm':
@@ -76,7 +76,7 @@ export function getModelForTradition(tradition: TraditionType): LanguageModelV1 
  * Returns the fallback model (Google Vertex Gemini 2.5 Flash).
  * Used by the fallback system when Claude is unavailable.
  */
-export function getFallbackModel(): LanguageModelV1 {
+export function getFallbackModel(): LanguageModel {
   const project = requireEnv('GOOGLE_CLOUD_PROJECT');
   const credentials = requireEnv('GOOGLE_APPLICATION_CREDENTIALS');
   const location = process.env.GOOGLE_CLOUD_LOCATION ?? 'us-central1';

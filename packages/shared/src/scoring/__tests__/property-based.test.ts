@@ -322,7 +322,7 @@ describe('property-based tests', () => {
         restrictionArb,
         (foods, restrictions) => {
           const filtered = filterRestrictions(foods, restrictions);
-          const restrictionSet = new Set(restrictions);
+          const restrictionSet = new Set<string>(restrictions);
           for (const food of filtered) {
             for (const tag of food.tags) {
               expect(restrictionSet.has(tag)).toBe(false);

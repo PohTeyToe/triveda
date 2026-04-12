@@ -23,6 +23,6 @@ import { THERMAL_VALUES } from './constants.js';
  * @returns A number in [0, 1].
  */
 export function weatherScore(foodTCM: FoodTCM, weather: WeatherContext): number {
-  const foodThermal = THERMAL_VALUES[foodTCM.thermalNature];
+  const foodThermal = THERMAL_VALUES[foodTCM.thermalNature] ?? 0;
   return 1.0 - Math.abs(weather.thermalNeed - foodThermal) / 2.0;
 }

@@ -20,8 +20,8 @@ import { goldenCombinations } from './fixtures/golden-combinations.js';
 
 expect.addSnapshotSerializer({
   test: (val: unknown) => typeof val === 'number',
-  serialize: (val: number) => Number(val.toFixed(4)).toString(),
-  print: (val: number) => Number(val.toFixed(4)).toString(),
+  serialize: (val: unknown) => Number((val as number).toFixed(4)).toString(),
+  print: (val: unknown) => Number((val as number).toFixed(4)).toString(),
 });
 
 // ---------------------------------------------------------------------------

@@ -185,7 +185,7 @@ describe('compile-time type tests', () => {
       modifiers: [],
       credits: [],
     };
-    expect(debug.factors[0].attribution).toBe(0.09);
+    expect(debug.factors[0]?.attribution).toBe(0.09);
   });
 
   it('ScoringTelemetry has all fields', () => {
@@ -284,7 +284,7 @@ describe('DECAY_STEPS', () => {
 
   it('scores increase with maxDays', () => {
     for (let i = 1; i < DECAY_STEPS.length; i++) {
-      expect(DECAY_STEPS[i].score).toBeGreaterThan(DECAY_STEPS[i - 1].score);
+      expect(DECAY_STEPS[i]?.score).toBeGreaterThan(DECAY_STEPS[i - 1]?.score ?? 0);
     }
   });
 

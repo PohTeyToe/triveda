@@ -50,8 +50,8 @@ export const RATE_LIMITS: Record<string, { limit: number; windowMs: number }> = 
 export function createRateLimiter(group: keyof typeof RATE_LIMITS) {
   const config = RATE_LIMITS[group] ?? RATE_LIMITS.default;
   return rateLimiter({
-    windowMs: config.windowMs,
-    limit: config.limit,
+    windowMs: config?.windowMs,
+    limit: config?.limit,
     keyGenerator,
   });
 }

@@ -449,7 +449,7 @@ function computeElementScores(answers: Answer[]): ElementResult | null {
     if (!weights) continue;
 
     for (const element of ['wood', 'fire', 'earth', 'metal', 'water'] as const) {
-      raw[element] += weights[element];
+      raw[element] = (raw[element] ?? 0) + (weights[element] ?? 0);
     }
   }
 

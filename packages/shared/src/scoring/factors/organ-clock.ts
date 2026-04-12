@@ -19,8 +19,9 @@ import { GENERATING_CYCLE, GENERATING_ELEMENT_THRESHOLD } from './constants.js';
  * element is considered supportive.
  */
 export function isGeneratingElement(foodTCM: FoodTCM, organClock: OrganClockContext): boolean {
-  const motherElement = GENERATING_CYCLE[organClock.element];
-  return foodTCM.elementFit[motherElement] > GENERATING_ELEMENT_THRESHOLD;
+  // biome-ignore lint/style/noNonNullAssertion: element is always a valid TCMElement key
+  const motherElement = GENERATING_CYCLE[organClock.element]!;
+  return (foodTCM.elementFit[motherElement] ?? 0) > GENERATING_ELEMENT_THRESHOLD;
 }
 
 /**

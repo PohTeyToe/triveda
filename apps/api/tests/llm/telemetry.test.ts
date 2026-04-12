@@ -71,15 +71,16 @@ describe('logLLMCall', () => {
 
     expect(logCalls.length).toBe(1);
     const logged = logCalls[0];
-    expect(logged.level).toBe('info');
-    expect(logged.message).toBe('llm_call');
+    expect(logged).toBeDefined();
+    expect(logged?.level).toBe('info');
+    expect(logged?.message).toBe('llm_call');
   });
 
   it('includes request_id, user_id, food_id, tradition', async () => {
     logLLMCall(makeEntry());
     await new Promise((r) => setTimeout(r, 10));
 
-    const meta = logCalls[0].metadata ?? {};
+    const meta = logCalls[0]?.metadata ?? {};
     expect(meta.requestId).toBe('req-001');
     expect(meta.userId).toBe('user-001');
     expect(meta.foodId).toBe('food-oats');
@@ -90,7 +91,7 @@ describe('logLLMCall', () => {
     logLLMCall(makeEntry());
     await new Promise((r) => setTimeout(r, 10));
 
-    const meta = logCalls[0].metadata ?? {};
+    const meta = logCalls[0]?.metadata ?? {};
     expect(meta.model).toBe('claude-sonnet-4-6');
     expect(meta.tokensIn).toBe(1200);
     expect(meta.tokensOut).toBe(300);
@@ -101,7 +102,7 @@ describe('logLLMCall', () => {
     logLLMCall(makeEntry());
     await new Promise((r) => setTimeout(r, 10));
 
-    const meta = logCalls[0].metadata ?? {};
+    const meta = logCalls[0]?.metadata ?? {};
     expect(meta.promptHash).toBe('abc123');
     expect(meta.promptVersion).toBe('v1');
     expect(meta.latencyFirstByteMs).toBe(150);
@@ -112,7 +113,7 @@ describe('logLLMCall', () => {
     logLLMCall(makeEntry({ cacheHit: true }));
     await new Promise((r) => setTimeout(r, 10));
 
-    expect(logCalls[0].metadata?.cacheHit).toBe(true);
+    expect(logCalls[0]?.metadata?.cacheHit).toBe(true);
   });
 
   it('includes responseJson', async () => {
@@ -120,7 +121,7 @@ describe('logLLMCall', () => {
     logLLMCall(makeEntry({ responseJson: json }));
     await new Promise((r) => setTimeout(r, 10));
 
-    expect(logCalls[0].metadata?.responseJson).toEqual(json);
+    expect(logCalls[0]?.metadata?.responseJson).toEqual(json);
   });
 
   it('does not throw on logger failure (fire-and-forget)', async () => {
@@ -138,7 +139,7 @@ describe('logLLMCall', () => {
 
     // Should have logged the failure to stderr
     expect(stderrSpy).toHaveBeenCalled();
-    const written = stderrSpy.mock.calls[0][0] as string;
+    const written = stderrSpy.mock.calls[0]?.[0] as string;
     const parsed = JSON.parse(written);
     expect(parsed.event).toBe('llm_call_log_failed');
     expect(parsed.error).toBe('DB connection lost');
@@ -160,7 +161,7 @@ describe('logLLMCall', () => {
     logLLMCall(makeEntry({ tradition: 'tcm', requestId: 'req-999' }));
     await new Promise((r) => setTimeout(r, 10));
 
-    const written = stderrSpy.mock.calls[0][0] as string;
+    const written = stderrSpy.mock.calls[0]?.[0] as string;
     const parsed = JSON.parse(written);
     expect(parsed.event).toBe('llm_call_log_failed');
     expect(parsed.tradition).toBe('tcm');
@@ -307,7 +308,7 @@ describe('createStderrLogger', () => {
     await logger.log('info', 'test message', { key: 'value' });
 
     expect(stderrSpy).toHaveBeenCalledTimes(1);
-    const written = stderrSpy.mock.calls[0][0] as string;
+    const written = stderrSpy.mock.calls[0]?.[0] as string;
     const parsed = JSON.parse(written.trim());
     expect(parsed.level).toBe('info');
     expect(parsed.message).toBe('test message');
