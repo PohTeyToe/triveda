@@ -20,13 +20,48 @@ export type { TelemetryLogger } from './telemetry.js';
 export * as webEnv from './env/web.js';
 export * as apiEnv from './env/api.js';
 
-// Engine interfaces
+// Engine types, schemas, and utilities
 export type {
+  // Enums / unions
+  Dosha,
+  Ritu,
+  TCMPhase,
+  TCMElement,
+  MetabolicType,
+  ANSDominance,
+  ThermalNature,
+  Virya,
+  // Input types
+  Answer,
+  WeatherInput,
+  FoodForConvergence,
+  // Output types
+  DoshaProfile,
+  DoshaClassification,
+  ElementScores,
+  SeasonalContext,
+  ConstitutionalProfile,
+  OrganClockContext,
+  WeatherContext,
+  DimensionResult,
+  ConvergenceReport,
+  DayContext,
+  // Debug types
+  SeasonalDebug,
+  ConstitutionalDebug,
+  OrganClockDebug,
+  WeatherDebug,
+  ConvergenceDebug,
+  // Result wrappers
+  SeasonalResult,
+  ConstitutionalResult,
+  OrganClockResult,
+  WeatherResult,
+  ConvergenceResult,
+  // Legacy interface stubs
   Season,
-  SeasonResult,
   SeasonEngine,
   ConstitutionAnswer,
-  DoshaProfile,
   ConstitutionResult,
   ConstitutionEngine,
   OrganMeridian,
@@ -35,8 +70,23 @@ export type {
   AyurvedicQualities,
   WeatherMapper,
   TraditionRecommendation,
-  ConvergenceResult,
   ConvergenceDetector,
+} from './engines/index.js';
+
+export {
+  AnswerSchema,
+  WeatherInputSchema,
+  SeasonalInputSchema,
+} from './engines/index.js';
+
+export {
+  fromDate,
+  getDayOfYear,
+  isLeapYear,
+  clamp,
+  normalize,
+  mode,
+  linearInterpolate,
 } from './engines/index.js';
 
 // LLM interfaces (types/schemas only -- runtime lives in apps/api)
