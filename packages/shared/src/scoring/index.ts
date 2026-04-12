@@ -60,3 +60,49 @@ export {
   FoodFeedbackSchema,
   ModifierValuesSchema,
 } from './schemas.js';
+
+// Factor functions
+export {
+  constitutionalFitScore,
+  seasonalScore,
+  weatherScore,
+  elementFitScore,
+  antiRepetitionScore,
+  daysBetween,
+  organClockScore,
+  isGeneratingElement,
+} from './factors/index.js';
+
+// Filters
+export {
+  filterCandidates,
+  filterRestrictions,
+  filterAllergies,
+  filterDislikes,
+} from './filters/index.js';
+
+// Modifiers
+export {
+  computeCompositeModifier,
+  applyModifiers,
+  bloodWorkModifierStub,
+  culturalMatchModifierStub,
+  dailyCheckInModifierStub,
+} from './modifiers/index.js';
+
+export type {
+  BloodWorkModifierFn,
+  CulturalMatchModifierFn,
+  DailyCheckInModifierFn,
+} from './modifiers/index.js';
+
+// Score composition (Section 05)
+export { scoreFood, scoreCandidates } from './score-food.js';
+export { selectTopN } from './select-top-n.js';
+
+// Credit emission (Section 06)
+export { emitCredits, ALWAYS_ACTIVE_COUNT } from './credits.js';
+
+// Explain and telemetry (Section 07)
+export { explainScore } from './explain.js';
+export { buildTelemetry } from './telemetry.js';
