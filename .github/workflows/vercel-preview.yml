@@ -1,0 +1,95 @@
+name: Vercel Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VITE_ENABLE_DEMO_MODE: "true"
+      VITE_SUPABASE_URL: ""
+      VITE_SUPABASE_ANON_KEY: ""
+      VITE_API_URL: "https://triveda-api.onrender.com"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Amend commit author (Vercel Hobby workaround)
+        run: |
+          git config user.email "abdullahsf2001@gmail.com"
+          git config user.name "Abdallah Safi"
+          git commit --amend --no-edit --reset-author
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel
+
+      - name: Pull Vercel config
+        run: vercel pull --yes --environment=preview --token=$VERCEL_TOKEN --scope=abdallah-safis-projects-bae5f9c3
+        working-directory: apps/web
+
+      - name: Build
+        run: vercel build --token=$VERCEL_TOKEN
+        working-directory: apps/web
+
+      - name: Deploy
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --token=$VERCEL_TOKEN --scope=abdallah-safis-projects-bae5f9c3)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+        working-directory: apps/web
+
+      - name: Update PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- vercel-preview -->';
+            const sha = context.sha.substring(0, 7);
+            const url = '${{ steps.deploy.outputs.url }}';
+            const time = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+
+            const body = [
+              marker,
+              '### Preview Deploy',
+              '',
+              '| Commit | URL | Time |',
+              '|-|-|-|',
+              `| ${sha} | [Preview](${url}) | ${time} |`,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

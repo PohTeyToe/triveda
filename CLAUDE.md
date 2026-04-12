@@ -14,9 +14,9 @@ Three-tradition daily food companion. Ayurveda (food lens), TCM (energy/temporal
 | Auth | Supabase Auth, JWT validated via Hono JWK middleware |
 | Monorepo | pnpm workspaces (Turborepo evaluated and deferred for 4 packages) |
 | Frontend deploy | Vercel (CLI deploys, Hobby plan git author workaround) |
-| Backend deploy | Railway (Bun template, auto-deploy from main) |
+| Backend deploy | Render (Docker, auto-deploy from main) |
 | Linting | Biome 1.9.x |
-| CI/CD | GitHub Actions (ci, vercel-preview, railway-deploy, claude-review) |
+| CI/CD | GitHub Actions (ci, vercel-preview, render-deploy, claude-review, codeql) |
 
 ## Package Structure
 
@@ -32,8 +32,22 @@ Three-tradition daily food companion. Ayurveda (food lens), TCM (energy/temporal
 All credentials in `.env.local` (gitignored). See `.env.example` for required vars.
 
 - Supabase: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
-- API: `VITE_API_URL` (Railway URL in prod)
-- Deploy: `VERCEL_TOKEN`, `RAILWAY_TOKEN`, `CC_OAUTH_TOKEN`
+- API: `VITE_API_URL` (Render URL in prod: `https://triveda-api.onrender.com`)
+- Deploy: `VERCEL_TOKEN`, `RENDER_API_KEY`, `CC_OAUTH_TOKEN`
+
+### GitHub Actions Secrets
+
+| Secret | Purpose |
+|-|-|
+| `VERCEL_TOKEN` | Vercel CLI deploys (preview + production) |
+| `CLAUDE_CODE_OAUTH_TOKEN` | Claude Code review bot (from `CC_OAUTH_TOKEN` env var) |
+| `RENDER_API_KEY` | Render deploy API |
+
+### Render
+
+- Service ID: `srv-d7drs21kh4rs73a0a250`
+- URL: `https://triveda-api.onrender.com`
+- Dockerfile: `apps/api/Dockerfile`
 
 ## Agent Rules
 

@@ -1,0 +1,39 @@
+name: Render Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "packages/**"
+      - ".github/workflows/render-deploy.yml"
+
+jobs:
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "https://api.render.com/v1/services/srv-d7drs21kh4rs73a0a250/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache":"do_not_clear"}'
+
+      - name: Wait for deploy
+        run: sleep 60
+
+      - name: Health check (with retries)
+        run: |
+          for i in 1 2 3 4 5; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" https://triveda-api.onrender.com/healthz)
+            if [ "$status" = "200" ]; then
+              echo "Health check passed (attempt $i)"
+              exit 0
+            fi
+            echo "Health check returned $status (attempt $i/5), retrying in 30s..."
+            sleep 30
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
