@@ -7,7 +7,7 @@
   "scripts": {
     "typecheck": "tsc --build",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "tsx migrate.ts"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.0",
@@ -16,6 +16,7 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.10"
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.21.0"
   }
 }
