@@ -1,9 +1,10 @@
 # Stage 1: Install and build with pnpm
 FROM node:20-slim AS builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 WORKDIR /app
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/api/package.json apps/api/
+COPY apps/web/package.json apps/web/
 COPY packages/shared/package.json packages/shared/
 COPY packages/db/package.json packages/db/
 RUN pnpm install --frozen-lockfile

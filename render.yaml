@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: triveda-api
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: "3001"
+      - key: DEMO_MODE
+        sync: false
+      - key: TRIVEDA_LLM_MODE
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: SUPABASE_JWKS_URL
+        sync: false
