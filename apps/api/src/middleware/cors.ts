@@ -4,8 +4,8 @@ import { getApiEnv } from '../env.js';
 /**
  * CORS middleware allowing:
  * - *.vercel.app (preview deploys)
- * - localhost on any port (local development)
- * - Production domain (via CORS_ORIGIN env var)
+ * - localhost on any port (development only)
+ * - Production domain (via CORS_ORIGIN or CORS_PRODUCTION_ORIGIN env var)
  */
 export function createCorsMiddleware() {
   return cors({
@@ -17,14 +17,16 @@ export function createCorsMiddleware() {
         return origin;
       }
 
-      // Allow localhost on any port
-      if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+      const env = getApiEnv();
+
+      // Allow localhost on any port in development
+      if (env.NODE_ENV === 'development' && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
         return origin;
       }
 
-      // Allow configured production origin
-      const env = getApiEnv();
-      if (env.CORS_ORIGIN && origin === env.CORS_ORIGIN) {
+      // Allow configured production origin (CORS_PRODUCTION_ORIGIN or legacy CORS_ORIGIN)
+      const prodOrigin = env.CORS_PRODUCTION_ORIGIN || env.CORS_ORIGIN;
+      if (prodOrigin && origin === prodOrigin) {
         return origin;
       }
 
@@ -32,8 +34,9 @@ export function createCorsMiddleware() {
       return '';
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Authorization', 'Content-Type'],
+    allowHeaders: ['Authorization', 'Content-Type', 'X-Request-Id'],
     exposeHeaders: ['X-Request-Id'],
-    maxAge: 86400,
+    credentials: true,
+    maxAge: 3600,
   });
 }

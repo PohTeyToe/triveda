@@ -3,6 +3,7 @@ import { createApp } from '../src/app.js';
 import { resetEnvCache } from '../src/env.js';
 
 process.env.DEMO_MODE = 'true';
+process.env.NODE_ENV = 'development';
 
 describe('CORS middleware', () => {
   let app: ReturnType<typeof createApp>;

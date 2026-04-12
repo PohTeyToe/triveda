@@ -32,4 +32,13 @@ describe('Request ID middleware', () => {
 
     expect(id1).not.toBe(id2);
   });
+
+  it('preserves client-provided X-Request-Id', async () => {
+    const clientId = 'client-provided-id-12345';
+    const res = await app.request('/healthz', {
+      headers: { 'X-Request-Id': clientId },
+    });
+
+    expect(res.headers.get('X-Request-Id')).toBe(clientId);
+  });
 });

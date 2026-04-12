@@ -7,6 +7,7 @@ import { AppError } from './error.js';
 export interface AuthUser {
   id: string;
   email: string;
+  role: string;
 }
 
 let jwks: ReturnType<typeof jose.createRemoteJWKSet> | null = null;
@@ -32,7 +33,11 @@ export const auth = createMiddleware(async (c, next) => {
 
   // Demo mode: skip JWT, attach fixture user
   if (env.DEMO_MODE) {
-    c.set('user', { id: DEMO_USER.id, email: DEMO_USER.email } satisfies AuthUser);
+    c.set('user', {
+      id: DEMO_USER.id,
+      email: DEMO_USER.email,
+      role: 'authenticated',
+    } satisfies AuthUser);
     await next();
     return;
   }
@@ -52,6 +57,7 @@ export const auth = createMiddleware(async (c, next) => {
     const user: AuthUser = {
       id: (payload.sub as string) ?? '',
       email: (payload.email as string) ?? '',
+      role: (payload.role as string) ?? 'authenticated',
     };
 
     if (!user.id) {

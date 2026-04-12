@@ -66,6 +66,10 @@ describe('Auth middleware', () => {
       process.env.SUPABASE_URL = `http://localhost:${jwksServer.port}`;
       process.env.DATABASE_URL = 'postgresql://localhost/test';
       process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key';
+      process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+      process.env.SUPABASE_JWKS_URL = `http://localhost:${jwksServer.port}/auth/v1/.well-known/jwks.json`;
+      process.env.OPENWEATHER_API_KEY = 'test-weather-key';
+      process.env.TRIVEDA_LLM_MODE = 'mock';
       resetEnvCache();
     });
 
@@ -101,6 +105,31 @@ describe('Auth middleware', () => {
       const body = await res.json();
       expect(body.user.id).toBe('user-123');
       expect(body.user.email).toBe('test@example.com');
+    });
+
+    it('extracts role from JWT claims', async () => {
+      const app = createAuthTestApp();
+      const token = await createValidJWT({ role: 'authenticated' });
+      const res = await app.request('/api/protected', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.user.role).toBe('authenticated');
+    });
+
+    it('defaults role to authenticated when not in JWT', async () => {
+      const app = createAuthTestApp();
+      // Create JWT without explicit role claim
+      const token = await createValidJWT({});
+      const res = await app.request('/api/protected', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.user.role).toBe('authenticated');
     });
   });
 
