@@ -16,6 +16,12 @@ export { faceScanReadings } from './face-scan-readings.js';
 export { demoState } from './demo-state.js';
 export { seasonalTransitionAcknowledgements } from './seasonal-acknowledgements.js';
 export { telemetry } from './telemetry.js';
+export { bloodWorkReports } from './blood-work-reports.js';
+export { bloodWorkBiomarkers } from './blood-work-biomarkers.js';
+export { bloodWorkReviewQueue } from './blood-work-review-queue.js';
+export { weeklyHerbs, weeklyHerbFeedback } from './weekly-herbs.js';
+export { triggerState, lifestyleTriggerFeedback } from './trigger-state.js';
+export { foodBiases } from './food-biases.js';
 
 // Re-export shared column types for downstream consumers
 export type { RituFit, ElementFit } from './shared-columns.js';

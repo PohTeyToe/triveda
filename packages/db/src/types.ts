@@ -6,6 +6,9 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import type {
   biomarkerFoodMappings,
+  bloodWorkBiomarkers,
+  bloodWorkReports,
+  bloodWorkReviewQueue,
   constitutionalProfiles,
   culturalCuisines,
   dailyCheckIns,
@@ -13,12 +16,17 @@ import type {
   demoState,
   evidenceClaims,
   faceScanReadings,
+  foodBiases,
   foodCategories,
   foodFeedback,
   foods,
   herbs,
+  lifestyleTriggerFeedback,
   seasonalTransitionAcknowledgements,
+  triggerState,
   userProfiles,
+  weeklyHerbFeedback,
+  weeklyHerbs,
 } from './schema/index.js';
 
 // ---------- Select types (reading from DB) ----------
@@ -39,6 +47,14 @@ export type DemoStateRow = InferSelectModel<typeof demoState>;
 export type SeasonalAcknowledgementRow = InferSelectModel<
   typeof seasonalTransitionAcknowledgements
 >;
+export type BloodWorkReportRow = InferSelectModel<typeof bloodWorkReports>;
+export type BloodWorkBiomarkerRow = InferSelectModel<typeof bloodWorkBiomarkers>;
+export type BloodWorkReviewQueueRow = InferSelectModel<typeof bloodWorkReviewQueue>;
+export type WeeklyHerbRow = InferSelectModel<typeof weeklyHerbs>;
+export type WeeklyHerbFeedbackRow = InferSelectModel<typeof weeklyHerbFeedback>;
+export type TriggerStateRow = InferSelectModel<typeof triggerState>;
+export type LifestyleTriggerFeedbackRow = InferSelectModel<typeof lifestyleTriggerFeedback>;
+export type FoodBiasRow = InferSelectModel<typeof foodBiases>;
 
 // ---------- Insert types (writing to DB) ----------
 
@@ -58,6 +74,14 @@ export type NewDemoState = InferInsertModel<typeof demoState>;
 export type NewSeasonalAcknowledgement = InferInsertModel<
   typeof seasonalTransitionAcknowledgements
 >;
+export type NewBloodWorkReport = InferInsertModel<typeof bloodWorkReports>;
+export type NewBloodWorkBiomarker = InferInsertModel<typeof bloodWorkBiomarkers>;
+export type NewBloodWorkReviewQueue = InferInsertModel<typeof bloodWorkReviewQueue>;
+export type NewWeeklyHerb = InferInsertModel<typeof weeklyHerbs>;
+export type NewWeeklyHerbFeedback = InferInsertModel<typeof weeklyHerbFeedback>;
+export type NewTriggerState = InferInsertModel<typeof triggerState>;
+export type NewLifestyleTriggerFeedback = InferInsertModel<typeof lifestyleTriggerFeedback>;
+export type NewFoodBias = InferInsertModel<typeof foodBiases>;
 
 // ---------- Property group picks ----------
 

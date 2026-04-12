@@ -1,16 +1,34 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useSearch } from '@tanstack/react-router';
+import { BloodWorkHistoryScreen } from '../components/blood-work/BloodWorkHistoryScreen';
+import { BloodWorkResultsScreen } from '../components/blood-work/BloodWorkResultsScreen';
+import { BloodWorkUploadScreen } from '../components/blood-work/BloodWorkUploadScreen';
+
+interface BloodWorkSearch {
+  view: string;
+  report: string;
+}
 
 export const Route = createFileRoute('/blood-work')({
   component: BloodWorkPage,
+  validateSearch: (search: Record<string, unknown>): BloodWorkSearch => ({
+    view: (search.view as string) ?? '',
+    report: (search.report as string) ?? '',
+  }),
 });
 
 function BloodWorkPage() {
-  return (
-    <div className="flex items-center justify-center min-h-[80vh]">
-      <div className="text-center p-8 rounded-2xl bg-dark-surface border border-dark-border max-w-md">
-        <h1 className="font-heading text-2xl font-bold text-teal mb-2">Blood Work</h1>
-        <p className="text-light/40 text-sm">Blood Work &mdash; Coming in split 08</p>
-      </div>
-    </div>
-  );
+  const search = useSearch({ from: '/blood-work' });
+
+  // Results view: /blood-work?report=<reportId>
+  if (search.report) {
+    return <BloodWorkResultsScreen reportId={search.report} />;
+  }
+
+  // Upload view: /blood-work?view=upload
+  if (search.view === 'upload') {
+    return <BloodWorkUploadScreen />;
+  }
+
+  // Default: history/landing
+  return <BloodWorkHistoryScreen />;
 }

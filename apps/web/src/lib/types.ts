@@ -76,6 +76,72 @@ export interface BrowseResponse<T> {
   nextCursor: string | null;
 }
 
+// ---------------------------------------------------------------------------
+// Blood work types
+// ---------------------------------------------------------------------------
+
+export interface BloodWorkTraditionContext {
+  ayurveda: string;
+  tcm: string;
+  naturopathy: string;
+}
+
+export interface BloodWorkBiomarker {
+  id: string;
+  canonicalKey: string;
+  displayName: string;
+  value: number;
+  unit: string;
+  originalUnit: string | null;
+  referenceRangeLow: number | null;
+  referenceRangeHigh: number | null;
+  flag: 'normal' | 'low' | 'high' | 'critical';
+  confidence: number;
+  loincCode: string | null;
+  extractionNotes: string | null;
+  manuallyCorrected: boolean;
+  correctedAt: string | null;
+  traditionContext: BloodWorkTraditionContext | null;
+}
+
+export interface BloodWorkReport {
+  id: string;
+  jobId: string;
+  status: 'pending' | 'processing' | 'complete' | 'failed';
+  vendor: string | null;
+  fileName: string;
+  fileSizeBytes: number;
+  pageCount: number | null;
+  extractionMethod: string | null;
+  foodInfluences: unknown;
+  uploadedAt: string;
+  processedAt: string | null;
+  biomarkers: BloodWorkBiomarker[];
+}
+
+export interface BloodWorkReportSummary {
+  id: string;
+  jobId: string;
+  vendor: string | null;
+  status: 'pending' | 'processing' | 'complete' | 'failed';
+  fileName: string;
+  biomarkerCount: number;
+  uploadedAt: string;
+  errorMessage: string | null;
+}
+
+export interface BloodWorkJobStatus {
+  id: string;
+  jobId: string;
+  status: 'pending' | 'processing' | 'complete' | 'failed';
+  stage: string | null;
+  fileName: string;
+  vendor: string | null;
+  biomarkerCount: number;
+  errorMessage: string | null;
+  uploadedAt: string;
+}
+
 export interface SeasonalTransition {
   active: boolean;
   transition: {
