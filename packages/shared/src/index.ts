@@ -126,3 +126,45 @@ export {
   naturopathyOutputSchema,
   synthesisOutputSchema,
 } from './llm/index.js';
+
+// Scoring engine types, constants, and schemas
+export type {
+  Contribution,
+  FoodAyurveda,
+  FoodTCM,
+  FoodForScoring,
+  FoodFeedback,
+  ModifierValues,
+  ScoringContext,
+  FactorDetail,
+  FactorBreakdown,
+  ModifierResult,
+  ScoredFood,
+  ScoreBreakdown,
+  ScoringTelemetry,
+  FactorName,
+  DecayStep,
+} from './scoring/index.js';
+
+export {
+  FACTOR_WEIGHTS,
+  THERMAL_VALUES,
+  DECAY_STEPS,
+  HARD_REJECT_DAYS,
+  GENERATING_CYCLE,
+  GENERATING_ELEMENT_THRESHOLD,
+  PRIMARY_ELEMENT_WEIGHT,
+  SECONDARY_ELEMENT_WEIGHT,
+  NEUTRAL_SCORE,
+  MODIFIER_CLAMP,
+  SCORE_CLAMP,
+  RituSchema,
+  TCMElementSchema,
+  ThermalNatureSchema,
+  FeedbackResponseSchema,
+  FoodAyurvedaSchema,
+  FoodTCMSchema,
+  FoodForScoringSchema,
+  FoodFeedbackSchema,
+  ModifierValuesSchema,
+} from './scoring/index.js';
