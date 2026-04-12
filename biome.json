@@ -19,6 +19,7 @@
     "rules": {
       "recommended": true,
       "correctness": {
+        "noUnusedVariables": "error",
         "useExhaustiveDependencies": "error"
       }
     }
