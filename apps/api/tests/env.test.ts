@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { getApiEnv, resetEnvCache } from '../src/env.js';
 
+function clearEnvVar(key: string) {
+  delete process.env[key];
+}
+
 describe('Environment validation', () => {
   const originalEnv = { ...process.env };
 
@@ -21,9 +25,9 @@ describe('Environment validation', () => {
 
   it('succeeds in demo mode without DATABASE_URL', () => {
     process.env.DEMO_MODE = 'true';
-    process.env.DATABASE_URL = undefined;
-    process.env.SUPABASE_URL = undefined;
-    process.env.SUPABASE_SERVICE_ROLE_KEY = undefined;
+    clearEnvVar('DATABASE_URL');
+    clearEnvVar('SUPABASE_URL');
+    clearEnvVar('SUPABASE_SERVICE_ROLE_KEY');
 
     const env = getApiEnv();
     expect(env.DEMO_MODE).toBe(true);
@@ -31,18 +35,18 @@ describe('Environment validation', () => {
 
   it('fails in non-demo mode without DATABASE_URL', () => {
     process.env.DEMO_MODE = 'false';
-    process.env.DATABASE_URL = undefined;
-    process.env.SUPABASE_URL = undefined;
-    process.env.SUPABASE_SERVICE_ROLE_KEY = undefined;
+    clearEnvVar('DATABASE_URL');
+    clearEnvVar('SUPABASE_URL');
+    clearEnvVar('SUPABASE_SERVICE_ROLE_KEY');
 
     expect(() => getApiEnv()).toThrow('Environment validation failed');
   });
 
   it('includes missing var names in error message', () => {
     process.env.DEMO_MODE = 'false';
-    process.env.DATABASE_URL = undefined;
-    process.env.SUPABASE_URL = undefined;
-    process.env.SUPABASE_SERVICE_ROLE_KEY = undefined;
+    clearEnvVar('DATABASE_URL');
+    clearEnvVar('SUPABASE_URL');
+    clearEnvVar('SUPABASE_SERVICE_ROLE_KEY');
 
     try {
       getApiEnv();
@@ -55,7 +59,7 @@ describe('Environment validation', () => {
 
   it('defaults PORT to 3001', () => {
     process.env.DEMO_MODE = 'true';
-    process.env.PORT = undefined;
+    clearEnvVar('PORT');
 
     const env = getApiEnv();
     expect(env.PORT).toBe(3001);
