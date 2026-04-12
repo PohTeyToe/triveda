@@ -127,6 +127,103 @@ export {
   synthesisOutputSchema,
 } from './llm/index.js';
 
+// Triggered outputs -- pattern detector, trigger rules, weekly herb config
+export {
+  // Types (re-exported for convenience)
+  type TriggerType,
+  type DismissalType,
+  type FeedbackType,
+  type DailyCheckIn,
+  type TriggerSuppressionState,
+  type TriggerFeedback,
+  type UserState,
+  type BreathworkTemplate,
+  type FoodBias,
+  type TriggerRecommendation,
+  type TriggerCandidate,
+  type ActiveTrigger,
+  type TriggerRule,
+  type ChipFieldMapping,
+  type CountResult,
+  type HerbDecayStep,
+  type HerbFeedback,
+  type HerbRow,
+  // Config
+  MIN_CHECKINS_FOR_DETECTION,
+  TRIGGER_WINDOW_DAYS,
+  TRIGGER_THRESHOLD,
+  TRIGGER_WEIGHTS,
+  SUPPRESSION_DURATIONS,
+  CHIP_TO_FIELD_MAP,
+  COPY_TEMPLATES,
+  COPY_DENY_LIST,
+  BREATHWORK_ROTATION_ORDER,
+  // Breathwork
+  BREATHWORK_TEMPLATES,
+  getBreathworkTemplate,
+  getBreathworkByRotation,
+  // Pattern detector
+  detectPatterns,
+  // Severity
+  computeSeverity,
+  rankBySeverity,
+  // Suppression
+  isSuppressed,
+  computeSuppressionEnd,
+  // Counting
+  countMatchingCheckIns,
+  // Weekly herb
+  HERB_WEIGHTS,
+  HERB_DECAY_STEPS,
+  DEFAULT_DELIVERY_DAY,
+  herbToScoringInput,
+} from './triggers/index.js';
+
+// Additional input types (face scan, daily check-in, cultural matching)
+export {
+  FaceScanReadingSchema,
+  DailyCheckInAnswerSchema,
+  ChipSelectionSchema,
+  CulturalPreferenceSchema,
+  CulturalRelationshipSchema,
+  CheckInChipPairSchema,
+  type FaceScanReading,
+  type DailyCheckInAnswer,
+  type ChipSelection,
+  type CulturalPreference,
+  type CulturalRelationship,
+  type CheckInChipPair,
+  type DoshaDelta,
+} from './inputs/index.js';
+
+// Face scan mock generator
+export { generateFaceScanReading, getFaceScanAdjustment } from './face-scan-mock/index.js';
+
+// Check-in mapping
+export { CHIP_PAIRS, computeCheckInDelta, getCheckInAdjustment } from './check-in-mapping/index.js';
+export type { ChipPairDefinition } from './check-in-mapping/index.js';
+
+// Cuisine taxonomy
+export {
+  CUISINES,
+  getCuisineByCode,
+  getCuisineLabel,
+  isValidCuisineCode,
+  getCuisinesByRegion,
+} from './cuisines/index.js';
+export type { CuisineEntry } from './cuisines/index.js';
+
+// Cultural bonus config
+export { CULTURAL_BONUS_WEIGHTS, getCulturalBonus } from './cultural-config/index.js';
+export { computeCulturalBonus } from './cultural-config/scoring-integration.js';
+
+// Credit source factories
+export {
+  createFaceScanCredit,
+  createDailyCheckInCredit,
+  createCulturalMatchCredit,
+} from './inputs/credit-factories.js';
+
 // Scoring engine types, constants, and schemas
 export type {
   Contribution,
