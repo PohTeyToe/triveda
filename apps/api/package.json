@@ -1,0 +1,14 @@
+{
+  "name": "@triveda/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'placeholder - section-03 fills this in'",
+    "build": "echo 'placeholder - section-03 fills this in'",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@triveda/shared": "workspace:*",
+    "@triveda/db": "workspace:*"
+  }
+}
