@@ -55,6 +55,22 @@ export {
   linearInterpolate,
 } from './utils/index.js';
 
+// Engine credit sources
+export type { EngineCreditSource } from './engine-credits.js';
+export {
+  SEASONAL_MAPPING_CREDIT,
+  ORGAN_CLOCK_TIMING_CREDIT,
+  WEATHER_ADJUSTMENT_CREDIT,
+  DOSHA_ANALYSIS_CREDIT,
+  FIVE_ELEMENT_AFFINITY_CREDIT,
+  CONVERGENCE_DETECTION_CREDIT,
+  PROGRESSIVE_PROFILE_STATE_CREDIT,
+  ENGINE_CREDITS,
+} from './engine-credits.js';
+
+// Seasonal engine (split 02)
+export { getSeasonalContext, getNextRitu, getPreviousRitu } from './seasonal.js';
+
 // Legacy interface stubs (from split 01 -- retained for compatibility)
 export type { Season, SeasonEngine } from './season.js';
 export type {
