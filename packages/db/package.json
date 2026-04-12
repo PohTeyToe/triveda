@@ -6,6 +6,7 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --build",
+    "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx migrate.ts"
   },
@@ -16,7 +17,9 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "drizzle-kit": "^0.31.10",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.4"
   }
 }

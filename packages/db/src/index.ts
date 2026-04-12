@@ -1,5 +1,16 @@
 // @triveda/db - Drizzle schemas, types, and validation for the Triveda database.
 
+// Database client factory
+export {
+  createServiceClient,
+  createAnonClient,
+  createAuthenticatedClient,
+  getDb,
+  closeAll,
+} from './client.js';
+
+export type { DbClient, DbSchema } from './client.js';
+
 // Table schemas
 export {
   foods,
