@@ -15,7 +15,7 @@ jobs:
       VITE_SUPABASE_ANON_KEY: ""
       VITE_API_URL: "https://triveda-api.onrender.com"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
 

@@ -32,7 +32,7 @@ jobs:
       TRIVEDA_LLM_MODE: "mock"
       NODE_ENV: "test"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - run: corepack enable
 
@@ -63,7 +63,7 @@ jobs:
       TRIVEDA_LLM_MODE: "mock"
       NODE_ENV: "test"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - run: corepack enable
 
