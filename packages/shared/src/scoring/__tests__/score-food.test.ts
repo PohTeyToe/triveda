@@ -174,7 +174,7 @@ describe('scoreCandidates', () => {
     const results = scoreCandidates(foods, VATA_PROFILE, HEMANTA_CONTEXT);
 
     for (let i = 1; i < results.length; i++) {
-      expect(results[i - 1]?.totalScore).toBeGreaterThanOrEqual(results[i]?.totalScore);
+      expect(results[i - 1]?.totalScore).toBeGreaterThanOrEqual(results[i]?.totalScore ?? 0);
     }
   });
 

@@ -12,14 +12,13 @@ import { useId } from 'react';
 import type { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import type { Question } from '../../lib/query-options';
 
-// biome-ignore lint/suspicious/noExplicitAny: RHF generic requires any for reusable components
-type FormValues = Record<string, any>;
-
 interface QuickStartQuestionProps {
   question: Question;
   fieldName: string;
-  register: UseFormRegister<FormValues>;
-  setValue?: UseFormSetValue<FormValues>;
+  // biome-ignore lint/suspicious/noExplicitAny: reusable form component
+  register: UseFormRegister<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: reusable form component
+  setValue?: UseFormSetValue<any>;
   selectedValue?: string | string[] | number;
   error?: string;
   /** Called when any option is selected, before RHF onChange fires */
@@ -104,7 +103,8 @@ function SingleChoiceQuestion({
 }: {
   question: Question;
   fieldName: string;
-  register: UseFormRegister<FormValues>;
+  // biome-ignore lint/suspicious/noExplicitAny: reusable form component
+  register: UseFormRegister<any>;
   selectedValue?: string;
   error?: string;
   questionTextId: string;
@@ -206,7 +206,8 @@ function MultiChoiceQuestion({
 }: {
   question: Question;
   fieldName: string;
-  register: UseFormRegister<FormValues>;
+  // biome-ignore lint/suspicious/noExplicitAny: reusable form component
+  register: UseFormRegister<any>;
   selectedValue?: string[];
   error?: string;
   questionTextId: string;
@@ -318,7 +319,8 @@ function ScaleQuestion({
 }: {
   question: Question;
   fieldName: string;
-  setValue?: UseFormSetValue<FormValues>;
+  // biome-ignore lint/suspicious/noExplicitAny: reusable form component
+  setValue?: UseFormSetValue<any>;
   selectedValue?: number;
   error?: string;
   questionTextId: string;

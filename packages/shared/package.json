@@ -4,6 +4,15 @@
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cuisines": "./src/cuisines/index.ts",
+    "./inputs": "./src/inputs/index.ts",
+    "./check-in-mapping": "./src/check-in-mapping/index.ts",
+    "./face-scan-mock": "./src/face-scan-mock/index.ts",
+    "./llm/types.js": "./src/llm/types.ts",
+    "./src/*": "./src/*"
+  },
   "scripts": {
     "typecheck": "tsc --build",
     "test": "vitest run"

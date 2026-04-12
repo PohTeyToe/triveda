@@ -82,7 +82,7 @@ describe('filterCandidates', () => {
     });
     const result = filterCandidates(foods, ctx);
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('passes');
+    expect(result[0]?.id).toBe('passes');
   });
 
   it('food matching restriction but not allergy or dislike -> still filtered', () => {

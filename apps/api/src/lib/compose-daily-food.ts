@@ -40,6 +40,7 @@ import type {
   FoodFeedback as ScoringFeedback,
 } from '@triveda/shared/src/scoring/types.js';
 import { and, eq, gte } from 'drizzle-orm';
+import { Temporal } from 'temporal-polyfill';
 import { createNonStreamingResponse, createSSEStream } from '../llm/index.js';
 import type { SSEOutputEvent } from '../llm/index.js';
 

@@ -338,14 +338,14 @@ describe('scoreConstitution', () => {
       const result = scoreConstitution(vataPittaDualAnswers);
       const scores = result.profile.doshaScores;
       const [first, second] = [scores.vata, scores.pitta, scores.kapha].sort((a, b) => b - a);
-      expect(first - second).toBeLessThan(0.15);
+      expect((first ?? 0) - (second ?? 0)).toBeLessThan(0.15);
     });
 
     it('gap between secondary and tertiary >= 0.10', () => {
       const result = scoreConstitution(vataPittaDualAnswers);
       const scores = result.profile.doshaScores;
       const [, second, third] = [scores.vata, scores.pitta, scores.kapha].sort((a, b) => b - a);
-      expect(second - third).toBeGreaterThanOrEqual(0.1);
+      expect((second ?? 0) - (third ?? 0)).toBeGreaterThanOrEqual(0.1);
     });
   });
 
@@ -380,7 +380,7 @@ describe('scoreConstitution', () => {
       const result = scoreConstitution(kaphaFullAnswers.slice(0, 10));
       const scores = result.profile.doshaScores;
       const [first, second] = [scores.vata, scores.pitta, scores.kapha].sort((a, b) => b - a);
-      expect(first - second).toBeGreaterThanOrEqual(0.15);
+      expect((first ?? 0) - (second ?? 0)).toBeGreaterThanOrEqual(0.15);
     });
   });
 

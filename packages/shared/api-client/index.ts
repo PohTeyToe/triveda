@@ -6,10 +6,14 @@
  * is bundled into the frontend -- only type information flows through.
  */
 
+import type { Hono } from 'hono';
 import { hc } from 'hono/client';
-import type { AppType } from '../../apps/api/src/app.js';
 
-export type { AppType };
+// Full AppType requires apps/api composite build.
+// Using base Hono type for now -- route-specific typing restored
+// once the api package exports a compiled .d.ts.
+// biome-ignore lint/suspicious/noExplicitAny: deferred until api is composite
+export type AppType = Hono<any, any, any>;
 
 /** Pre-compiled client type for IDE performance. */
 export type Client = ReturnType<typeof hc<AppType>>;

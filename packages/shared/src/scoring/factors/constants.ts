@@ -5,7 +5,7 @@
  * No IO, no side effects, no mutation.
  */
 
-import type { TCMElement, ThermalNature } from '../engines/types.js';
+import type { TCMElement, ThermalNature } from '../../engines/types.js';
 
 // ---------------------------------------------------------------------------
 // Factor weights (sum to 1.0)

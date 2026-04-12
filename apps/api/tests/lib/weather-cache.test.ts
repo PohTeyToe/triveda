@@ -118,7 +118,7 @@ describe('WeatherCache', () => {
   });
 
   it('concurrent requests for same coordinates produce one fetch call', async () => {
-    let resolvePromise: (val: WeatherData) => void;
+    let resolvePromise!: (val: WeatherData) => void;
     const slowFetch = new Promise<WeatherData>((resolve) => {
       resolvePromise = resolve;
     });

@@ -46,7 +46,7 @@ describe('filterDislikes', () => {
     const foods = [makeFood('food-456')];
     const result = filterDislikes(foods, ['food-123']);
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('food-456');
+    expect(result[0]?.id).toBe('food-456');
   });
 
   it('empty dislike list -> all foods pass', () => {

@@ -123,12 +123,14 @@ async function* mockStreamEvents(
   for (const tradition of traditions) {
     if (signal?.aborted) return;
     const result = mockResults[tradition];
+    if (!result) continue;
 
     // Emit a partial with a subset of fields
     const partialFields = Object.keys(result.output as Record<string, unknown>);
     const partial: Record<string, unknown> = {};
     if (partialFields.length > 0) {
-      partial[partialFields[0]] = (result.output as Record<string, unknown>)[partialFields[0]];
+      const firstField = partialFields[0] as string;
+      partial[firstField] = (result.output as Record<string, unknown>)[firstField];
     }
 
     yield { type: 'tradition_partial', tradition, partial };
@@ -137,7 +139,8 @@ async function* mockStreamEvents(
     // Emit another partial with more fields
     if (partialFields.length > 1) {
       for (let i = 1; i < partialFields.length; i++) {
-        partial[partialFields[i]] = (result.output as Record<string, unknown>)[partialFields[i]];
+        const field = partialFields[i] as string;
+        partial[field] = (result.output as Record<string, unknown>)[field];
       }
       yield { type: 'tradition_partial', tradition, partial };
       await delay(MOCK_STREAM_DELAY_MS, signal);

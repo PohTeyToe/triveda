@@ -100,3 +100,6 @@ export {
   seasonalAgreement,
   evidenceAgreement,
 } from './convergence.js';
+
+// Legacy interface stubs -- convergence types from split 01
+export type { TraditionRecommendation, ConvergenceDetector } from './convergence-legacy.js';

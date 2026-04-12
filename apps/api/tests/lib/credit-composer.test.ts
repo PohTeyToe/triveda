@@ -27,7 +27,7 @@ describe('composeCredits', () => {
         expect(credit.featureName.length).toBeGreaterThan(0);
         expect(typeof credit.active).toBe('boolean');
         expect(typeof credit.contribution).toBe('string');
-        expect(['active', 'latent', 'future']).toContain(credit.contribution);
+        expect(['active', 'latent', 'future']).toContain(credit.contribution ?? '');
       }
     });
   }

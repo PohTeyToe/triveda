@@ -9,6 +9,7 @@ import { seasonalTransitionAcknowledgements, userProfiles } from '@triveda/db';
 import { getPreviousRitu, getSeasonalContext } from '@triveda/shared/src/engines/index.js';
 import { and, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
+import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 import type { AuthUser } from '../middleware/auth.js';
 import { AppError } from '../middleware/error.js';

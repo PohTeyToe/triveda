@@ -27,7 +27,6 @@ import type {
   ConvergenceResult,
   DayContext,
   DoshaProfile,
-  EngineCreditSource,
   FoodForConvergence,
   OrganClockResult,
   SeasonalContext,
@@ -36,6 +35,7 @@ import type {
   WeatherResult,
 } from '../types.js';
 
+import type { EngineCreditSource } from '../engine-credits.js';
 import {
   CONVERGENCE_DETECTION_CREDIT,
   DOSHA_ANALYSIS_CREDIT,
