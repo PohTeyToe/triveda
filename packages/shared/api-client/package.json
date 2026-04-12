@@ -1,0 +1,11 @@
+{
+  "name": "@triveda/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "dependencies": {
+    "hono": "^4.12.12"
+  }
+}

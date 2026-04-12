@@ -27,6 +27,7 @@ export {
   faceScanReadings,
   demoState,
   seasonalTransitionAcknowledgements,
+  telemetry,
 } from './schema/index.js';
 
 // Shared column types

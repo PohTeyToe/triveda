@@ -15,6 +15,7 @@ export { dailyCheckIns } from './daily-check-ins.js';
 export { faceScanReadings } from './face-scan-readings.js';
 export { demoState } from './demo-state.js';
 export { seasonalTransitionAcknowledgements } from './seasonal-acknowledgements.js';
+export { telemetry } from './telemetry.js';
 
 // Re-export shared column types for downstream consumers
 export type { RituFit, ElementFit } from './shared-columns.js';

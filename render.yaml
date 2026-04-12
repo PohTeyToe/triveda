@@ -11,6 +11,8 @@ services:
     envVars:
       - key: PORT
         value: "3001"
+      - key: NODE_ENV
+        value: "production"
       - key: DEMO_MODE
         sync: false
       - key: TRIVEDA_LLM_MODE
@@ -19,9 +21,17 @@ services:
         sync: false
       - key: SUPABASE_URL
         sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       - key: SUPABASE_JWT_SECRET
         sync: false
       - key: SUPABASE_JWKS_URL
+        sync: false
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CORS_PRODUCTION_ORIGIN
         sync: false
