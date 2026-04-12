@@ -9,6 +9,12 @@ export { biomarkerFoodMappings } from './biomarker-mappings.js';
 export { foodCategories } from './food-categories.js';
 export { culturalCuisines } from './cultural-cuisines.js';
 export { userProfiles } from './user-profiles.js';
+export { constitutionalProfiles } from './constitutional-profiles.js';
+export { foodFeedback } from './food-feedback.js';
+export { dailyCheckIns } from './daily-check-ins.js';
+export { faceScanReadings } from './face-scan-readings.js';
+export { demoState } from './demo-state.js';
+export { seasonalTransitionAcknowledgements } from './seasonal-acknowledgements.js';
 
 // Re-export shared column types for downstream consumers
 export type { RituFit, ElementFit } from './shared-columns.js';

@@ -1,0 +1,76 @@
+/**
+ * Food and herb fixture objects for route tests.
+ */
+
+export const SAMPLE_FOOD = {
+  id: '00000000-0000-0000-0000-000000000001',
+  name: 'Mung Bean',
+  category: 'legume',
+  subcategory: 'bean',
+  description: 'Light, easy to digest legume',
+  rasa: ['madhura'],
+  virya: 'sheeta',
+  vipaka: 'madhura',
+  guna: ['laghu', 'ruksha'],
+  vata_effect: -1,
+  pitta_effect: -1,
+  kapha_effect: 0,
+  ritu_fit: { shishira: 0.5, vasanta: 0.8, grishma: 0.9, varsha: 0.7, sharad: 0.6, hemanta: 0.5 },
+  thermal_nature: 'cool',
+  flavor: ['sweet'],
+  organ_affinity: ['stomach', 'spleen'],
+  actions: ['tonify_qi'],
+  element_fit: { wood: 0.3, fire: 0.2, earth: 0.8, metal: 0.3, water: 0.4 },
+  glycemic_index: 38,
+  bioactive_compounds: [{ name: 'Isoflavones', amount_per_100g: 12, unit: 'mg' }],
+  contraindications: null,
+  tags: ['legume'],
+  seed_source: 'canonical',
+  validation_status: 'validated',
+};
+
+export const SAMPLE_HERB = {
+  id: '00000000-0000-0000-0000-000000000010',
+  name: 'Ashwagandha',
+  category: 'adaptogen',
+  subcategory: 'root',
+  description: 'Rejuvenating adaptogenic herb',
+  rasa: ['tikta', 'kashaya'],
+  virya: 'ushna',
+  vipaka: 'madhura',
+  guna: ['laghu', 'snigdha'],
+  vata_effect: -2,
+  pitta_effect: 0,
+  kapha_effect: -1,
+  ritu_fit: { shishira: 0.9, vasanta: 0.7, grishma: 0.4, varsha: 0.6, sharad: 0.7, hemanta: 0.9 },
+  thermal_nature: 'warm',
+  flavor: ['bitter', 'astringent'],
+  organ_affinity: ['kidney', 'lung'],
+  actions: ['tonify_qi', 'calm_shen'],
+  element_fit: { wood: 0.3, fire: 0.4, earth: 0.6, metal: 0.5, water: 0.7 },
+  herb_actions: ['adaptogen', 'nervine', 'anti-inflammatory'],
+  contraindications: ['pregnancy'],
+  dosage_forms: ['powder', 'capsule', 'decoction'],
+  pregnancy_safety: 'contraindicated',
+  prabhava: 'Strengthens ojas',
+  is_culinary: false,
+  bioactive_compounds: [{ name: 'Withanolides', amount_per_100g: 5, unit: 'mg' }],
+  seed_source: 'canonical',
+  validation_status: 'validated',
+};
+
+export const SAMPLE_FOODS = [
+  SAMPLE_FOOD,
+  {
+    ...SAMPLE_FOOD,
+    id: '00000000-0000-0000-0000-000000000002',
+    name: 'Basmati Rice',
+    category: 'grain',
+  },
+  {
+    ...SAMPLE_FOOD,
+    id: '00000000-0000-0000-0000-000000000003',
+    name: 'Ghee',
+    category: 'fat',
+  },
+];

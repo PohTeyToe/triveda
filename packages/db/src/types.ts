@@ -6,12 +6,18 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import type {
   biomarkerFoodMappings,
+  constitutionalProfiles,
   culturalCuisines,
+  dailyCheckIns,
   dataSources,
+  demoState,
   evidenceClaims,
+  faceScanReadings,
   foodCategories,
+  foodFeedback,
   foods,
   herbs,
+  seasonalTransitionAcknowledgements,
   userProfiles,
 } from './schema/index.js';
 
@@ -25,6 +31,14 @@ export type BiomarkerFoodMapping = InferSelectModel<typeof biomarkerFoodMappings
 export type FoodCategory = InferSelectModel<typeof foodCategories>;
 export type CulturalCuisine = InferSelectModel<typeof culturalCuisines>;
 export type UserProfile = InferSelectModel<typeof userProfiles>;
+export type ConstitutionalProfileRow = InferSelectModel<typeof constitutionalProfiles>;
+export type FoodFeedbackRow = InferSelectModel<typeof foodFeedback>;
+export type DailyCheckInRow = InferSelectModel<typeof dailyCheckIns>;
+export type FaceScanReadingRow = InferSelectModel<typeof faceScanReadings>;
+export type DemoStateRow = InferSelectModel<typeof demoState>;
+export type SeasonalAcknowledgementRow = InferSelectModel<
+  typeof seasonalTransitionAcknowledgements
+>;
 
 // ---------- Insert types (writing to DB) ----------
 
@@ -36,6 +50,14 @@ export type NewBiomarkerFoodMapping = InferInsertModel<typeof biomarkerFoodMappi
 export type NewFoodCategory = InferInsertModel<typeof foodCategories>;
 export type NewCulturalCuisine = InferInsertModel<typeof culturalCuisines>;
 export type NewUserProfile = InferInsertModel<typeof userProfiles>;
+export type NewConstitutionalProfile = InferInsertModel<typeof constitutionalProfiles>;
+export type NewFoodFeedback = InferInsertModel<typeof foodFeedback>;
+export type NewDailyCheckIn = InferInsertModel<typeof dailyCheckIns>;
+export type NewFaceScanReading = InferInsertModel<typeof faceScanReadings>;
+export type NewDemoState = InferInsertModel<typeof demoState>;
+export type NewSeasonalAcknowledgement = InferInsertModel<
+  typeof seasonalTransitionAcknowledgements
+>;
 
 // ---------- Property group picks ----------
 
