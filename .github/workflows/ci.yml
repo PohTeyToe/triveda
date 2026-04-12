@@ -7,21 +7,30 @@ on:
       - "apps/**"
       - "packages/**"
       - ".github/workflows/ci.yml"
+      - "pnpm-lock.yaml"
   pull_request:
+    branches: [main]
     paths:
       - "apps/**"
       - "packages/**"
       - ".github/workflows/ci.yml"
+      - "pnpm-lock.yaml"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   quality:
-    name: Lint, Typecheck & Build
+    name: Lint, Typecheck & Test
     runs-on: ubuntu-latest
     env:
       VITE_ENABLE_DEMO_MODE: "true"
       VITE_SUPABASE_URL: ""
       VITE_SUPABASE_ANON_KEY: ""
       VITE_API_URL: "http://localhost:3001"
+      TRIVEDA_LLM_MODE: "mock"
+      NODE_ENV: "test"
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +38,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
@@ -51,6 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEMO_MODE: "true"
+      TRIVEDA_LLM_MODE: "mock"
+      NODE_ENV: "test"
     steps:
       - uses: actions/checkout@v4
 
@@ -58,7 +69,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - uses: oven-sh/setup-bun@v2

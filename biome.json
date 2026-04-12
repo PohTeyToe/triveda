@@ -31,7 +31,7 @@
     }
   },
   "files": {
-    "include": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts"],
+    "include": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts", "scripts/**/*.ts"],
     "ignore": ["node_modules", "dist", "*.d.ts", "*.gen.ts", "coverage", "playwright-report"]
   }
 }

@@ -2,14 +2,53 @@ node_modules/
 dist/
 .env
 .env.local
+.env.production
 .vercel/
 playwright-report/
 coverage/
 *.tsbuildinfo
 .turbo/
 
+# TypeScript build output (tsc composite project refs)
+# Source dirs
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+apps/*/src/**/*.js
+apps/*/src/**/*.js.map
+apps/*/src/**/*.d.ts
+apps/*/src/**/*.d.ts.map
+# Test dirs
+apps/*/tests/**/*.js
+apps/*/tests/**/*.js.map
+apps/*/tests/**/*.d.ts
+apps/*/tests/**/*.d.ts.map
+# Config files at package root
+packages/*/*.js
+packages/*/*.js.map
+packages/*/*.d.ts
+packages/*/*.d.ts.map
+apps/*/*.js
+apps/*/*.js.map
+apps/*/*.d.ts
+apps/*/*.d.ts.map
+# Shared subpackage dirs
+packages/*/api-client/*.js
+packages/*/api-client/*.js.map
+packages/*/api-client/*.d.ts
+packages/*/api-client/*.d.ts.map
+# Vercel serverless functions build output
+apps/*/api/**/*.js
+apps/*/api/**/*.js.map
+apps/*/api/**/*.d.ts
+apps/*/api/**/*.d.ts.map
+
 # TanStack Router generated
 routeTree.gen.ts
 .tanstack/
+
+# Deploy state
+.deploy-state.json
 
 .vercel
