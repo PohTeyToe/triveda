@@ -1,0 +1,7 @@
+apps/web
+.git
+node_modules
+*.md
+.github
+playwright-report
+coverage
