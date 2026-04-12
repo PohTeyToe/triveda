@@ -65,3 +65,15 @@ export {
 
 // Section 03: Tradition caller
 export { callTradition, type CallOptions } from './tradition-caller.js';
+
+// Section 05: Fallback + circuit breaker
+export {
+  callWithFallback,
+  CircuitBreaker,
+  getCircuitBreaker,
+  resetAllCircuitBreakers,
+  type FallbackResult,
+} from './fallback.js';
+
+// Section 04: Orchestrator
+export { orchestrateDailyFood } from './orchestrator.js';
