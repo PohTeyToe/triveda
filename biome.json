@@ -21,6 +21,12 @@
       "correctness": {
         "noUnusedVariables": "error",
         "useExhaustiveDependencies": "error"
+      },
+      "a11y": {
+        "useSemanticElements": "warn"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "warn"
       }
     }
   },
