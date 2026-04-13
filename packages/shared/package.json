@@ -11,6 +11,16 @@
     "./check-in-mapping": "./src/check-in-mapping/index.ts",
     "./face-scan-mock": "./src/face-scan-mock/index.ts",
     "./llm/types.js": "./src/llm/types.ts",
+    "./src/engines/index.js": "./src/engines/index.ts",
+    "./src/engines/convergence.js": "./src/engines/convergence.ts",
+    "./src/engines/types.js": "./src/engines/types.ts",
+    "./src/credits.js": "./src/credits.ts",
+    "./src/llm/types.js": "./src/llm/types.ts",
+    "./src/llm/index.js": "./src/llm/index.ts",
+    "./src/llm/prompts/v1/schemas.js": "./src/llm/prompts/v1/schemas.ts",
+    "./src/scoring/index.js": "./src/scoring/index.ts",
+    "./src/scoring/types.js": "./src/scoring/types.ts",
+    "./src/telemetry.js": "./src/telemetry.ts",
     "./src/*": "./src/*"
   },
   "scripts": {

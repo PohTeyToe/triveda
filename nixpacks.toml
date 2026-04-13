@@ -1,0 +1,14 @@
+# Nixpacks config (legacy -- project now uses Railpack builder)
+# Kept for reference only; railway.json sets builder = "RAILPACK"
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "bun"]
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["echo 'Skipping build -- Bun runs TypeScript directly'"]
+
+[start]
+cmd = "bun run apps/api/src/index.ts"
