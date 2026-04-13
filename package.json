@@ -2,6 +2,11 @@
   "name": "triveda",
   "private": true,
   "packageManager": "pnpm@9.15.9",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "packages/shared/api-client"
+  ],
   "scripts": {
     "dev": "pnpm --filter @triveda/web dev & pnpm --filter @triveda/api dev",
     "build": "pnpm -r build",
