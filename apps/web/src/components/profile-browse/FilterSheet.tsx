@@ -66,20 +66,22 @@ function FilterContent({
     <div className="space-y-5">
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light/30" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cream/30" />
         <input
           type="search"
           value={localSearch}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder={`Search ${tab}...`}
           aria-label={`Search ${tab}`}
-          className="w-full min-h-11 pl-10 pr-4 py-2 rounded-xl bg-dark-surface border border-dark-border text-sm text-light placeholder:text-light/30 focus:outline-none focus:ring-2 focus:ring-teal"
+          className="w-full min-h-[44px] pl-10 pr-4 py-2 rounded-full bg-dark-elevated ghost-border text-sm font-body text-cream placeholder:text-cream/30 focus:outline-none focus:ring-2 focus:ring-teal"
         />
       </div>
 
       {/* Category */}
       <div>
-        <p className="text-xs text-light/40 mb-2 font-medium uppercase tracking-wide">Category</p>
+        <p className="font-body text-xs text-cream/40 mb-2 font-medium uppercase tracking-wider">
+          Category
+        </p>
         <ChipSelect
           options={categories}
           value={filters.category}
@@ -91,7 +93,9 @@ function FilterContent({
       {/* Season (foods only) */}
       {tab === 'foods' && (
         <div>
-          <p className="text-xs text-light/40 mb-2 font-medium uppercase tracking-wide">Season</p>
+          <p className="font-body text-xs text-cream/40 mb-2 font-medium uppercase tracking-wider">
+            Season
+          </p>
           <ChipSelect
             options={SEASON_OPTIONS}
             value={filters.season}
@@ -107,7 +111,7 @@ function FilterContent({
           type="button"
           onClick={clearAll}
           aria-label="Clear all filters"
-          className="text-sm text-teal hover:text-teal-soft transition-colors"
+          className="font-body text-sm text-teal hover:text-teal/80 transition-colors"
         >
           Clear all ({activeCount})
         </button>
@@ -147,7 +151,7 @@ export function FilterSheet(props: FilterSheetProps) {
         onClick={onOpen}
         aria-expanded={isOpen}
         aria-controls="filter-sheet"
-        className="flex items-center gap-2 min-h-11 px-4 py-2 rounded-xl bg-dark-surface border border-dark-border text-sm text-light/70 hover:bg-dark-border transition-colors focus:outline-none focus:ring-2 focus:ring-teal"
+        className="flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-full bg-dark-elevated text-sm font-body text-cream/60 hover:bg-dark-surface-high transition-colors focus:outline-none focus:ring-2 focus:ring-teal"
       >
         <SlidersHorizontal className="w-4 h-4" />
         Filters
@@ -167,17 +171,17 @@ export function FilterSheet(props: FilterSheetProps) {
           <Drawer.Overlay className="fixed inset-0 bg-dark/50 z-[90]" />
           <Drawer.Content
             id="filter-sheet"
-            className="fixed bottom-0 left-0 right-0 z-[91] bg-dark-elevated rounded-t-2xl border-t border-dark-border"
+            className="fixed bottom-0 left-0 right-0 z-[91] bg-dark-elevated rounded-t-2xl"
           >
-            <div className="mx-auto w-12 h-1.5 rounded-full bg-dark-border mt-3 mb-4" />
+            <div className="mx-auto w-12 h-1.5 rounded-full bg-dark-surface-high mt-3 mb-4" />
             <div className="px-4 pb-8 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-heading text-lg font-bold">Filters</h2>
+                <h2 className="font-heading text-lg font-bold text-cream">Filters</h2>
                 <Drawer.Close asChild>
                   <button
                     type="button"
                     aria-label="Close filters"
-                    className="p-2 rounded-lg text-light/40 hover:text-light hover:bg-dark-border transition-colors focus:outline-none focus:ring-2 focus:ring-teal"
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-cream/40 hover:text-cream hover:bg-dark-surface-high transition-colors focus:outline-none focus:ring-2 focus:ring-teal"
                   >
                     <X className="w-5 h-5" />
                   </button>

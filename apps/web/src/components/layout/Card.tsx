@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-type CardVariant = 'default' | 'elevated' | 'outlined';
+type CardVariant = 'default' | 'elevated' | 'highest';
 
 interface CardProps {
   children: ReactNode;
@@ -8,14 +8,16 @@ interface CardProps {
   className?: string;
 }
 
+/**
+ * Tonal card -- uses background-shift layering only.
+ * No 1px borders per design system "no-line rule."
+ */
 const variantClasses: Record<CardVariant, string> = {
-  default:
-    'bg-white dark:bg-dark-surface border border-dark-border/30 dark:border-dark-border rounded-xl',
-  elevated:
-    'bg-white dark:bg-dark-elevated border border-dark-border/30 dark:border-dark-border rounded-xl shadow-sm',
-  outlined: 'bg-transparent border border-dark-border/50 dark:border-dark-border rounded-xl',
+  default: 'bg-light-muted dark:bg-dark-elevated rounded-2xl',
+  elevated: 'bg-light-surface dark:bg-dark-surface-high rounded-2xl ambient-shadow',
+  highest: 'bg-light-surface-high dark:bg-dark-surface-highest rounded-2xl ambient-shadow',
 };
 
 export function Card({ children, variant = 'default', className = '' }: CardProps) {
-  return <div className={`p-3 ${variantClasses[variant]} ${className}`}>{children}</div>;
+  return <div className={`p-4 ${variantClasses[variant]} ${className}`}>{children}</div>;
 }

@@ -9,8 +9,8 @@ type DailyCardHeaderProps = {
   weatherSummary: string;
 };
 
+const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'long' });
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  weekday: 'long',
   month: 'long',
   day: 'numeric',
 });
@@ -19,8 +19,9 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 const BLOCKED_TERMS = ['Ritu', 'Vasanta', 'Sharad', 'Grishma', 'Hemanta', 'Shishira', 'Varsha'];
 
 export function DailyCardHeader({ date, seasonLabel, weatherSummary }: DailyCardHeaderProps) {
-  // Format ISO date to plain English
-  const formattedDate = dateFormatter.format(new Date(`${date}T12:00:00`));
+  const dateObj = new Date(`${date}T12:00:00`);
+  const weekday = weekdayFormatter.format(dateObj);
+  const formattedDate = dateFormatter.format(dateObj);
 
   // Dev-only assertion: no Sanskrit in season label
   if (import.meta.env.DEV) {
@@ -34,14 +35,13 @@ export function DailyCardHeader({ date, seasonLabel, weatherSummary }: DailyCard
   }
 
   return (
-    <div className="space-y-0.5" data-testid="daily-card-header">
-      <p className="font-body text-sm font-medium text-neutral-600 dark:text-neutral-400">
-        {formattedDate}
-      </p>
-      <p className="font-body text-sm font-medium text-neutral-700 dark:text-neutral-300">
-        {seasonLabel}
-      </p>
-      <p className="font-body text-xs text-neutral-500 dark:text-neutral-500">{weatherSummary}</p>
+    <div className="py-4" data-testid="daily-card-header">
+      <p className="font-body text-xs uppercase tracking-wider text-cream/40">{weekday}</p>
+      <div className="flex items-baseline gap-2 mt-0.5">
+        <h1 className="font-heading text-xl font-bold text-cream">{formattedDate}</h1>
+        <span className="text-cream/50 text-sm font-body">{weatherSummary}</span>
+      </div>
+      <p className="font-body text-xs text-cream/40 mt-0.5">{seasonLabel}</p>
     </div>
   );
 }

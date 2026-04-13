@@ -134,15 +134,11 @@ export function CreditChip({
         onFocus={onFocus}
         aria-describedby={tooltipId}
         className={`
-          rounded-full px-3 py-1.5 min-h-[44px]
-          text-xs font-medium whitespace-nowrap
-          border transition-colors
+          bg-dark-surface-high rounded-full px-3 py-1.5 min-h-[44px]
+          text-xs font-body whitespace-nowrap
+          transition-colors
           focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
-          ${
-            active
-              ? 'bg-teal/10 dark:bg-teal/20 text-teal-700 dark:text-teal border-teal/20 dark:border-teal/30'
-              : 'bg-light-muted dark:bg-dark-elevated text-neutral-400 dark:text-neutral-500 border-neutral-200 dark:border-dark-border'
-          }
+          ${active ? 'text-teal' : 'text-cream/50'}
         `}
         {...getReferenceProps()}
       >
@@ -157,11 +153,9 @@ export function CreditChip({
             role="tooltip"
             style={floatingStyles}
             className="
-              bg-white dark:bg-dark-elevated
-              text-neutral-800 dark:text-neutral-200
-              text-xs rounded-lg px-3 py-2
-              shadow-lg dark:shadow-md
-              max-w-xs z-50
+              bg-dark-surface-highest text-cream/80
+              text-xs font-body rounded-lg px-3 py-2
+              shadow-lg max-w-xs z-50
             "
             {...getFloatingProps()}
           >

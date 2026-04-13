@@ -44,7 +44,11 @@ export function TabShell({ tabs, activeTab, onTabChange, children }: TabShellPro
 
   return (
     <div>
-      <div ref={tabsRef} role="tablist" className="flex gap-0 border-b border-dark-border mb-4">
+      <div
+        ref={tabsRef}
+        role="tablist"
+        className="flex gap-1 bg-dark-surface-low rounded-xl p-1 mb-4"
+      >
         {tabs.map((tab, index) => {
           const isActive = tab.id === activeTab;
           return (
@@ -58,15 +62,15 @@ export function TabShell({ tabs, activeTab, onTabChange, children }: TabShellPro
               tabIndex={isActive ? 0 : -1}
               onClick={() => onTabChange(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className={`relative px-6 py-3 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal rounded-t ${
-                isActive ? 'text-teal' : 'text-light/50 hover:text-light/70'
+              className={`relative rounded-lg px-4 py-2 font-body text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal min-h-[44px] flex-1 ${
+                isActive ? 'text-dark' : 'text-cream/50 hover:text-cream/70'
               }`}
             >
               {tab.label}
               {isActive && (
                 <motion.div
                   layoutId="tab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal"
+                  className="absolute inset-0 bg-teal rounded-lg -z-10"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}

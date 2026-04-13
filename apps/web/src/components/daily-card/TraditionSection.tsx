@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useTraditionStream } from '../../hooks/useTraditionStream';
+import { sectionExpandProps } from '../../lib/animations';
 
 type TraditionSectionProps = {
   title: string;
@@ -22,7 +23,7 @@ export function TraditionSection({ title, tradition }: TraditionSectionProps) {
 
   return (
     <div
-      className="border-t border-neutral-200 dark:border-dark-border"
+      className="bg-dark-surface-high rounded-xl p-4 mt-2"
       data-testid={`tradition-section-${tradition}`}
     >
       <button
@@ -31,32 +32,31 @@ export function TraditionSection({ title, tradition }: TraditionSectionProps) {
         aria-expanded={isOpen}
         aria-controls={contentId}
         className="
-          w-full flex items-center justify-between py-2 px-1
-          font-body text-base font-medium
-          text-neutral-800 dark:text-neutral-200
+          w-full flex items-center justify-between
+          min-h-[44px]
           focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
           rounded
         "
       >
-        <h2 className="text-base font-medium">{title}</h2>
+        <span className="font-body text-xs uppercase tracking-wider text-cream/40">{title}</span>
         <ChevronDown
-          className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
+          className={`w-4 h-4 text-cream/30 transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
       </button>
 
-      <AnimatePresence initial={false}>
+      <AnimatePresence initial={sectionExpandProps.initial}>
         {isOpen && (
           <motion.div
             id={contentId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            transition={sectionExpandProps.transition}
             style={{ overflow: 'hidden' }}
           >
-            <div className="pb-3 px-1">
+            <div className="pt-2">
               <TraditionContent state={traditionState.state} text={traditionState.text} />
             </div>
           </motion.div>
@@ -78,12 +78,12 @@ function TraditionContent({
   text: string;
 }) {
   if (state === 'idle') {
-    return <p className="font-body text-sm text-neutral-500">Loading...</p>;
+    return <p className="font-body text-sm text-cream/40">Loading...</p>;
   }
 
   if (state === 'streaming') {
     return (
-      <p className="font-body text-sm text-neutral-700 dark:text-neutral-300">
+      <p className="font-body text-sm text-cream/70 leading-relaxed">
         {text}
         <motion.span
           className="bg-teal rounded-full w-2 h-2 inline-block ml-1"
@@ -98,10 +98,8 @@ function TraditionContent({
   if (state === 'error') {
     return (
       <div>
-        {text && (
-          <p className="font-body text-sm text-neutral-700 dark:text-neutral-300 mb-1">{text}</p>
-        )}
-        <p className="font-body text-sm text-neutral-500 italic">
+        {text && <p className="font-body text-sm text-cream/70 leading-relaxed mb-1">{text}</p>}
+        <p className="font-body text-sm text-cream/30 italic">
           Could not finish loading this section
         </p>
       </div>
@@ -109,5 +107,5 @@ function TraditionContent({
   }
 
   // complete
-  return <p className="font-body text-sm text-neutral-700 dark:text-neutral-300">{text}</p>;
+  return <p className="font-body text-sm text-cream/70 leading-relaxed">{text}</p>;
 }

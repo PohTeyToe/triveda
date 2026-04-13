@@ -1,15 +1,19 @@
 import { Outlet, createRootRoute, useRouterState } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Container } from '../components/layout/Container';
 import { MobileBottomNav } from '../components/layout/MobileBottomNav';
 import { Navigation } from '../components/layout/Navigation';
-import { SeasonalTransitionCard } from '../components/profile-browse/SeasonalTransitionCard';
 import { AuthProvider } from '../contexts/AuthContext';
 import { pageTransitionProps } from '../lib/animations';
 
-/** Routes where the bottom nav should be hidden */
-const HIDE_NAV_ROUTES = new Set(['/quick-start', '/login', '/signup', '/auth/callback']);
+/** Routes where nav chrome should be hidden (immersive flows) */
+const HIDE_NAV_ROUTES = new Set([
+  '/welcome',
+  '/quick-start',
+  '/login',
+  '/signup',
+  '/auth/callback',
+]);
 
 function RootLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -17,26 +21,26 @@ function RootLayout() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen flex flex-col">
-        <Navigation />
+      {/* Grain texture overlay */}
+      <div className="grain" />
 
-        {/* Main content -- top padding for fixed nav, bottom padding for mobile nav */}
-        <main className={`flex-1 pt-12 ${hideNav ? 'pb-0' : 'pb-16 md:pb-0'}`}>
-          <Container>
+      <div className="min-h-screen flex flex-col">
+        {!hideNav && <Navigation />}
+
+        {/* Main content -- top padding for fixed nav, bottom for mobile nav */}
+        <main className={`flex-1 ${hideNav ? '' : 'pt-12 pb-20 md:pb-0'}`}>
+          <div className="mx-auto max-w-lg px-4">
             <AnimatePresence mode="wait">
               <motion.div key={pathname} {...pageTransitionProps}>
                 <Outlet />
               </motion.div>
             </AnimatePresence>
-          </Container>
+          </div>
         </main>
 
         {!hideNav && <MobileBottomNav />}
 
-        {/* Seasonal transition overlay (global) */}
-        <SeasonalTransitionCard />
-
-        {/* Dev tools -- only in development */}
+        {/* Dev tools */}
         {import.meta.env.DEV && <TanStackRouterDevtools />}
       </div>
     </AuthProvider>

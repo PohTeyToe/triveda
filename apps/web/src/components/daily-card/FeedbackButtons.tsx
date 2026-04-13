@@ -50,13 +50,9 @@ export function FeedbackButtons({
         aria-pressed={isTried}
         className={`
           min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center
-          border transition-colors
+          transition-colors
           focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
-          ${
-            isTried
-              ? 'bg-teal/20 border-teal/30 text-teal'
-              : 'bg-white dark:bg-dark-surface border-neutral-200 dark:border-dark-border text-neutral-400'
-          }
+          ${isTried ? 'bg-teal/20 text-teal' : 'bg-dark-surface-high text-cream/40'}
         `}
       >
         <Check className="w-5 h-5" />
@@ -70,13 +66,9 @@ export function FeedbackButtons({
         aria-pressed={isRejected}
         className={`
           min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center
-          border transition-colors
+          transition-colors
           focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
-          ${
-            isRejected
-              ? 'bg-neutral-700/50 border-neutral-600 text-neutral-300'
-              : 'bg-white dark:bg-dark-surface border-neutral-200 dark:border-dark-border text-neutral-400'
-          }
+          ${isRejected ? 'bg-cream/10 text-cream/60' : 'bg-dark-surface-high text-cream/40'}
         `}
       >
         <X className="w-5 h-5" />
@@ -89,9 +81,8 @@ export function FeedbackButtons({
         aria-label="Request an alternative"
         className="
           text-xs px-3 py-1.5 rounded-full
-          border border-neutral-200 dark:border-dark-border
-          text-neutral-500 font-body
-          hover:border-teal/30 hover:text-teal
+          bg-dark-surface-high text-cream/50 font-body
+          hover:text-teal
           transition-colors
           focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
         "

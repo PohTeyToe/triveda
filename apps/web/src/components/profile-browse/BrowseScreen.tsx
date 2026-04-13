@@ -1,12 +1,15 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useCallback, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Search } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   prefetchFoodDetail,
   prefetchHerbDetail,
   useFoodsBrowse,
   useHerbsBrowse,
 } from '../../hooks/profile-browse';
+import { staggerContainer } from '../../lib/animations';
 import type { BrowseFood, BrowseHerb } from '../../lib/types';
 import { type BrowseFilters, FilterSheet } from './FilterSheet';
 import { FoodCard } from './FoodCard';
@@ -59,6 +62,98 @@ const DEFAULT_FILTERS: BrowseFilters = {
   search: '',
 };
 
+// ---- Inline search chip with debounce ----
+
+function SearchChip({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  const [local, setLocal] = useState(value);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setLocal(value);
+  }, [value]);
+
+  const handleChange = (v: string) => {
+    setLocal(v);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => onChange(v), 300);
+  };
+
+  return (
+    <div className="relative shrink-0">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cream/30 pointer-events-none" />
+      <input
+        type="search"
+        value={local}
+        onChange={(e) => handleChange(e.target.value)}
+        placeholder={placeholder}
+        aria-label={placeholder}
+        className="min-h-[44px] w-40 pl-9 pr-4 py-2 rounded-full bg-dark-elevated ghost-border text-sm font-body text-cream placeholder:text-cream/30 focus:outline-none focus:ring-2 focus:ring-teal"
+      />
+    </div>
+  );
+}
+
+// ---- Filter chip row ----
+
+function FilterChipRow({
+  categories,
+  activeCategory,
+  onCategoryChange,
+  search,
+  onSearchChange,
+  tab,
+}: {
+  categories: { value: string; label: string }[];
+  activeCategory: string | null;
+  onCategoryChange: (value: string | null) => void;
+  search: string;
+  onSearchChange: (value: string) => void;
+  tab: string;
+}) {
+  return (
+    <div className="overflow-x-auto scrollbar-hide mb-4">
+      <div className="flex gap-2 pb-1">
+        <SearchChip value={search} onChange={onSearchChange} placeholder={`Search ${tab}...`} />
+
+        <button
+          type="button"
+          onClick={() => onCategoryChange(null)}
+          className={`rounded-full px-4 py-2 text-sm font-body whitespace-nowrap transition-colors min-h-[44px] flex items-center ${
+            activeCategory === null
+              ? 'bg-teal text-dark font-medium'
+              : 'bg-dark-elevated text-cream/60 hover:bg-dark-surface-high'
+          }`}
+        >
+          All
+        </button>
+
+        {categories.map((cat) => (
+          <button
+            key={cat.value}
+            type="button"
+            onClick={() => onCategoryChange(activeCategory === cat.value ? null : cat.value)}
+            className={`rounded-full px-4 py-2 text-sm font-body whitespace-nowrap transition-colors min-h-[44px] flex items-center ${
+              activeCategory === cat.value
+                ? 'bg-teal text-dark font-medium'
+                : 'bg-dark-elevated text-cream/60 hover:bg-dark-surface-high'
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ---- Foods Tab Content ----
 
 function FoodsTab({ filters }: { filters: BrowseFilters }) {
@@ -101,8 +196,8 @@ function FoodsTab({ filters }: { filters: BrowseFilters }) {
         />
       )}
       emptyState={
-        <div className="text-center py-12 text-light/40">
-          <p>No foods in this category.</p>
+        <div className="text-center py-12 text-cream/40">
+          <p className="font-body">No foods in this category.</p>
         </div>
       }
     />
@@ -150,8 +245,8 @@ function HerbsTab({ filters }: { filters: BrowseFilters }) {
         />
       )}
       emptyState={
-        <div className="text-center py-12 text-light/40">
-          <p>No herbs in this category.</p>
+        <div className="text-center py-12 text-cream/40">
+          <p className="font-body">No herbs in this category.</p>
         </div>
       }
     />
@@ -191,10 +286,21 @@ export function BrowseScreen() {
   );
 
   return (
-    <div className="py-6">
-      <h1 className="font-heading text-2xl font-bold text-teal mb-4">Browse</h1>
+    <motion.div className="py-6" variants={staggerContainer} initial="hidden" animate="visible">
+      {/* Header */}
+      <h1 className="font-heading text-2xl font-bold text-teal tracking-tight mb-4">Browse</h1>
 
-      {/* Filter bar (mobile) or sidebar layout */}
+      {/* Filter chips row */}
+      <FilterChipRow
+        categories={currentCategories}
+        activeCategory={currentFilters.category}
+        onCategoryChange={(value) => handleFiltersChange({ category: value })}
+        search={currentFilters.search}
+        onSearchChange={(value) => handleFiltersChange({ search: value })}
+        tab={activeTab}
+      />
+
+      {/* Desktop sidebar + main content */}
       <div className="flex gap-6">
         {/* Desktop sidebar */}
         <div className="hidden lg:block">
@@ -229,6 +335,6 @@ export function BrowseScreen() {
           </TabShell>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

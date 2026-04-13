@@ -1,24 +1,26 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
-import { Compass, Home, Search, Settings, User } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Compass, Home, Search, User } from 'lucide-react';
+import { bottomNavEntrance } from '../../lib/animations';
 
 const TAB_ITEMS = [
   { to: '/', label: 'Home', icon: Home },
-  { to: '/daily', label: 'Daily', icon: Compass },
+  { to: '/constitution', label: 'Profile', icon: Compass },
   { to: '/browse', label: 'Browse', icon: Search },
-  { to: '/profile', label: 'Profile', icon: User },
-  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/settings', label: 'Settings', icon: User },
 ] as const;
 
 export function MobileBottomNav() {
   const matchRoute = useMatchRoute();
 
   return (
-    <nav
+    <motion.nav
       aria-label="Mobile navigation"
-      className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-dark-elevated dark:bg-dark-elevated border-t border-dark-border"
+      className="md:hidden fixed bottom-0 inset-x-0 z-50 glass dark:glass glass-light"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      {...bottomNavEntrance}
     >
-      <div className="flex justify-around items-center px-2 py-2">
+      <div className="flex justify-around items-center px-2 h-16">
         {TAB_ITEMS.map((item) => {
           const isActive = matchRoute({ to: item.to, fuzzy: item.to !== '/' });
           const Icon = item.icon;
@@ -29,18 +31,24 @@ export function MobileBottomNav() {
               to={item.to}
               aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex flex-col items-center gap-0.5 p-1.5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal ${
-                isActive
-                  ? 'text-teal drop-shadow-[0_0_6px_rgba(20,184,166,0.4)]'
-                  : 'text-light/50 hover:text-teal'
+              className={`relative flex flex-col items-center justify-center gap-1 min-w-[44px] min-h-[44px] rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal ${
+                isActive ? 'text-teal' : 'text-cream/40 dark:text-cream/40 hover:text-teal/70'
               }`}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-[10px] leading-none">{item.label}</span>
+              <span className="text-[10px] leading-none font-body">{item.label}</span>
+              {/* Teal dot indicator */}
+              {isActive && (
+                <motion.span
+                  layoutId="nav-dot"
+                  className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-teal"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
             </Link>
           );
         })}
       </div>
-    </nav>
+    </motion.nav>
   );
 }

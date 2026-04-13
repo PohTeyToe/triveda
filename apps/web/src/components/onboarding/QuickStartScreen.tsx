@@ -1,22 +1,22 @@
 /**
- * QuickStartScreen -- the first screen a new Triveda user sees.
+ * QuickStartScreen -- one question at a time with slide transitions.
  *
- * Three questions, one submit button. No progress bar, no back button,
- * no skip. Fifteen seconds to complete.
- *
- * "People can't even do 3-second Instagram reels." -- Sasha
+ * Three questions shown sequentially. Steps 0-1 auto-advance 400ms
+ * after selection. Step 2 shows "See my profile" button.
  */
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useConstitutionProfile } from '../../hooks/useConstitutionProfile';
+import { questionSlide, questionSlideTransition } from '../../lib/animations';
 import { seedQuestionsQueryOptions } from '../../lib/query-options';
 import { ErrorBanner, getErrorMessage } from './ErrorBanner';
-import { QuickStartQuestion } from './QuickStartQuestion';
-import { SubmitButton } from './SubmitButton';
+import { Spinner } from './Spinner';
 
 // ---------------------------------------------------------------------------
 // Validation schema
@@ -48,6 +48,11 @@ export function QuickStartScreen() {
   });
 
   const questions = questionsQuery.data ?? [];
+  const watchedAnswers = form.watch('answers');
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const autoAdvanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const onSubmit = (data: QuickStartInput) => {
     submitQuickStart.mutate(
@@ -60,93 +65,209 @@ export function QuickStartScreen() {
     );
   };
 
-  const watchedAnswers = form.watch('answers');
+  const goNext = useCallback(() => {
+    if (currentStep < 2) {
+      setDirection(1);
+      setCurrentStep((s) => s + 1);
+    }
+  }, [currentStep]);
 
-  const allAnswered =
-    questions.length === 3 &&
-    watchedAnswers?.[0]?.choice &&
-    watchedAnswers?.[1]?.choice &&
-    watchedAnswers?.[2]?.choice;
+  const goBack = useCallback(() => {
+    if (currentStep > 0) {
+      if (autoAdvanceTimer.current) {
+        clearTimeout(autoAdvanceTimer.current);
+        autoAdvanceTimer.current = null;
+      }
+      setDirection(-1);
+      setCurrentStep((s) => s - 1);
+    }
+  }, [currentStep]);
+
+  const handleOptionSelect = useCallback(
+    (questionId: string, value: string, stepIdx: number) => {
+      const key =
+        stepIdx === 0
+          ? 'answers.0.questionId'
+          : stepIdx === 1
+            ? 'answers.1.questionId'
+            : 'answers.2.questionId';
+      form.setValue(key, Number(questionId));
+      form.setValue(`answers.${stepIdx as 0 | 1 | 2}.choice` as const, value, {
+        shouldValidate: true,
+      });
+
+      // Auto-advance for steps 0 and 1
+      if (stepIdx < 2) {
+        if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current);
+        autoAdvanceTimer.current = setTimeout(() => {
+          goNext();
+          autoAdvanceTimer.current = null;
+        }, 400);
+      }
+    },
+    [form, goNext],
+  );
+
+  const currentAnswer = watchedAnswers?.[currentStep]?.choice;
+
+  // ---------------------------------------------------------------------------
+  // Loading
+  // ---------------------------------------------------------------------------
 
   if (questionsQuery.isLoading) {
     return (
-      <div className="max-w-lg mx-auto animate-pulse space-y-6 py-8">
-        <div className="h-8 w-64 bg-gray-200 dark:bg-dark-surface rounded mx-auto" />
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="space-y-2">
-            <div className="h-5 w-48 bg-gray-200 dark:bg-dark-surface rounded" />
-            <div className="h-12 w-full bg-gray-200 dark:bg-dark-surface rounded-xl" />
-            <div className="h-12 w-full bg-gray-200 dark:bg-dark-surface rounded-xl" />
-            <div className="h-12 w-full bg-gray-200 dark:bg-dark-surface rounded-xl" />
-          </div>
-        ))}
+      <div className="flex flex-col items-center justify-center min-h-screen px-6">
+        <div className="w-full max-w-md space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse bg-dark-elevated rounded-2xl h-14" />
+          ))}
+        </div>
       </div>
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Error
+  // ---------------------------------------------------------------------------
 
   if (questionsQuery.isError || questions.length < 3) {
     return (
-      <div className="max-w-lg mx-auto py-8">
-        <ErrorBanner
-          message="Could not load questions. Check your connection and try again."
-          onRetry={() => questionsQuery.refetch()}
-          isRetrying={questionsQuery.isRefetching}
-        />
+      <div className="flex items-center justify-center min-h-screen px-6">
+        <div className="w-full max-w-md">
+          <ErrorBanner
+            message="Could not load questions. Check your connection and try again."
+            onRetry={() => questionsQuery.refetch()}
+            isRetrying={questionsQuery.isRefetching}
+          />
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="max-w-lg mx-auto py-8">
-      <h1 className="font-heading text-2xl md:text-3xl font-bold text-center text-dark dark:text-light mb-8">
-        Let's get to know you.
-      </h1>
+  // ---------------------------------------------------------------------------
+  // Main UI
+  // ---------------------------------------------------------------------------
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 md:space-y-8" noValidate>
-        {questions.map((question, idx) => (
-          <QuickStartQuestion
-            key={question.id}
-            question={question}
-            fieldName={`answers.${idx}.choice` as const}
-            register={form.register}
-            selectedValue={watchedAnswers?.[idx]?.choice}
-            error={form.formState.errors.answers?.[idx]?.choice?.message}
-            onValueChange={() => {
-              // Set the questionId when any radio in this group changes
-              const key =
-                idx === 0
-                  ? 'answers.0.questionId'
-                  : idx === 1
-                    ? 'answers.1.questionId'
-                    : 'answers.2.questionId';
-              form.setValue(key, Number(question.id));
-            }}
+  const question = questions[currentStep];
+  if (!question) return null;
+
+  return (
+    <div className="flex flex-col min-h-screen px-6 py-12">
+      {/* Progress dots */}
+      <div className="flex items-center justify-center gap-2 mb-auto">
+        {[0, 1, 2].map((idx) => (
+          <div
+            key={idx}
+            className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+              idx === currentStep ? 'bg-teal' : 'bg-dark-elevated'
+            }`}
           />
         ))}
+      </div>
 
-        {/* Error banner for submission failures */}
+      {/* Question area */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={currentStep}
+            custom={direction}
+            variants={questionSlide}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={questionSlideTransition}
+            className="w-full"
+          >
+            {/* Question text */}
+            <h2
+              className="font-heading text-xl font-bold text-cream mb-8"
+              style={{ letterSpacing: '-0.02em' }}
+            >
+              {question.text}
+            </h2>
+
+            {/* Options */}
+            <div aria-label={question.text} className="flex flex-col gap-3">
+              {question.options.map((option) => {
+                const isSelected = currentAnswer === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => handleOptionSelect(question.id, option.value, currentStep)}
+                    className={`
+                      relative text-left min-h-[56px] py-4 px-5 rounded-2xl
+                      cursor-pointer select-none touch-manipulation
+                      transition-all duration-150
+                      ${isSelected ? 'bg-teal/10 text-teal' : 'bg-dark-elevated text-cream/70'}
+                    `}
+                  >
+                    {/* Teal left accent */}
+                    {isSelected && (
+                      <span className="absolute left-0 top-3 bottom-3 w-1 rounded-full bg-teal" />
+                    )}
+                    <span className="font-body text-sm">{option.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Submission error */}
         {submitQuickStart.isError && (
-          <ErrorBanner
-            message={getErrorMessage(submitQuickStart.error)}
-            onRetry={() => {
-              submitQuickStart.reset();
-              form.handleSubmit(onSubmit)();
-            }}
-            isRetrying={submitQuickStart.isPending}
-          />
+          <div className="w-full mt-6">
+            <ErrorBanner
+              message={getErrorMessage(submitQuickStart.error)}
+              onRetry={() => {
+                submitQuickStart.reset();
+                form.handleSubmit(onSubmit)();
+              }}
+              isRetrying={submitQuickStart.isPending}
+            />
+          </div>
         )}
+      </div>
 
-        {/* Submit button -- sticky on mobile */}
-        <div className="sticky bottom-0 pt-4 pb-safe bg-gradient-to-t from-light dark:from-dark via-light/80 dark:via-dark/80 to-transparent">
-          <SubmitButton
-            text="See my profile"
-            isPending={submitQuickStart.isPending}
-            isDisabled={!allAnswered}
-            onClick={form.handleSubmit(onSubmit)}
-            variant="primary"
-          />
+      {/* Navigation */}
+      <div className="mt-auto pt-8 w-full max-w-md mx-auto">
+        <div className="flex items-center gap-4">
+          {/* Back button */}
+          {currentStep > 0 ? (
+            <button
+              type="button"
+              onClick={goBack}
+              className="font-body text-sm text-cream/40 py-3 px-2 touch-manipulation"
+            >
+              Back
+            </button>
+          ) : (
+            <div className="w-12" />
+          )}
+
+          {/* Next / Submit */}
+          <button
+            type="button"
+            onClick={currentStep === 2 ? form.handleSubmit(onSubmit) : goNext}
+            disabled={!currentAnswer || (currentStep === 2 && submitQuickStart.isPending)}
+            className={`
+              flex-1 bg-teal text-dark font-body font-medium rounded-2xl
+              min-h-[48px] flex items-center justify-center
+              transition-opacity duration-150
+              ${!currentAnswer ? 'opacity-40 pointer-events-none' : ''}
+            `}
+          >
+            {submitQuickStart.isPending ? (
+              <Spinner size="md" />
+            ) : currentStep === 2 ? (
+              'See my profile'
+            ) : (
+              'Next'
+            )}
+          </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

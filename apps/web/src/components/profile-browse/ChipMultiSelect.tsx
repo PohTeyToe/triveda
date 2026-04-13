@@ -54,20 +54,19 @@ export function ChipMultiSelect({
   const customChips = values.filter((v) => !predefinedValues.includes(v));
 
   return (
-    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
+    <fieldset aria-label={label} className="flex flex-wrap gap-2">
       {options.map((option) => {
         const isSelected = values.includes(option.value);
         return (
           <button
             key={option.value}
             type="button"
-            role="checkbox"
-            aria-checked={isSelected}
+            aria-pressed={isSelected}
             onClick={() => toggleChip(option.value)}
             className={`min-h-11 px-4 py-2 rounded-full text-sm font-body transition-colors focus:outline-none focus:ring-2 focus:ring-teal ${
               isSelected
-                ? 'bg-teal text-dark font-medium'
-                : 'bg-dark-surface text-white/60 dark:bg-dark-surface dark:text-white/60 hover:bg-dark-border'
+                ? 'bg-teal/15 text-teal font-medium'
+                : 'bg-dark-surface-high text-cream/50 hover:bg-dark-surface-high/80'
             }`}
           >
             {option.label}
@@ -78,14 +77,14 @@ export function ChipMultiSelect({
       {customChips.map((chip) => (
         <span
           key={chip}
-          className="min-h-11 px-4 py-2 rounded-full text-sm font-body bg-teal text-dark font-medium inline-flex items-center gap-1"
+          className="min-h-11 px-4 py-2 rounded-full text-sm font-body bg-teal/15 text-teal font-medium inline-flex items-center gap-1"
         >
           {chip}
           <button
             type="button"
             onClick={() => removeCustom(chip)}
             aria-label={`Remove ${chip}`}
-            className="ml-1 rounded-full p-0.5 hover:bg-dark/20 focus:outline-none focus:ring-2 focus:ring-dark"
+            className="ml-1 rounded-full p-0.5 hover:bg-teal/20 focus:outline-none focus:ring-2 focus:ring-teal"
           >
             <X className="w-3 h-3" />
           </button>
@@ -100,7 +99,7 @@ export function ChipMultiSelect({
             setTimeout(() => inputRef.current?.focus(), 0);
           }}
           aria-label={customPlaceholder}
-          className="min-h-11 px-4 py-2 rounded-full text-sm font-body bg-dark-surface text-white/60 hover:bg-dark-border transition-colors focus:outline-none focus:ring-2 focus:ring-teal inline-flex items-center gap-1"
+          className="min-h-11 px-4 py-2 rounded-full text-sm font-body bg-dark-surface-high text-cream/50 hover:bg-dark-surface-high/80 transition-colors focus:outline-none focus:ring-2 focus:ring-teal inline-flex items-center gap-1"
         >
           <Plus className="w-4 h-4" />
           Add
@@ -125,9 +124,9 @@ export function ChipMultiSelect({
           }}
           onBlur={addCustom}
           placeholder={customPlaceholder}
-          className="min-h-11 px-4 py-2 rounded-full text-sm font-body bg-dark-surface text-light border border-dark-border focus:outline-none focus:ring-2 focus:ring-teal"
+          className="min-h-11 px-4 py-2 rounded-full text-sm font-body bg-dark-surface-high text-cream focus:outline-none focus:ring-2 focus:ring-teal"
         />
       )}
-    </div>
+    </fieldset>
   );
 }

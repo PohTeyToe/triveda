@@ -7,6 +7,7 @@
 import { ALL_FEATURE_IDS, type CreditSource } from '@triveda/shared';
 import { motion } from 'framer-motion';
 import { type KeyboardEvent, useCallback, useRef, useState } from 'react';
+import { staggerContainer, staggerItem } from '../../lib/animations';
 import { CreditChip } from './CreditChip';
 
 type CreditRowProps = {
@@ -20,13 +21,13 @@ export function TwentyTwoFeatureCreditRow({ credits, visible }: CreditRowProps) 
   const [focusedIndex, setFocusedIndex] = useState(0);
   const hasRevealed = useRef(false);
   const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const activeCount = credits.filter((c) => c.active).length;
 
   // Mark as revealed after first animation
   const isFirstReveal = visible && !hasRevealed.current;
   if (visible && !hasRevealed.current) {
-    // Will be set after render
     requestAnimationFrame(() => {
       hasRevealed.current = true;
     });
@@ -65,61 +66,35 @@ export function TwentyTwoFeatureCreditRow({ credits, visible }: CreditRowProps) 
 
   if (!visible) return null;
 
-  const containerVariants = isFirstReveal
-    ? {
-        hidden: {},
-        show: { transition: { staggerChildren: 0.03 } },
-      }
-    : undefined;
-
-  const activeChipVariants = isFirstReveal
-    ? {
-        hidden: { scale: 0.8, opacity: 0 },
-        show: { scale: 1, opacity: 1 },
-      }
-    : undefined;
-
-  const dormantChipVariants = isFirstReveal
-    ? {
-        hidden: { opacity: 0 },
-        show: { opacity: 0.5 },
-      }
-    : undefined;
-
   return (
-    <div className="mt-3" data-testid="credit-row">
-      {/* Subtitle */}
-      <p className="font-body text-xs text-neutral-500 mb-2">
-        This recommendation drew on {activeCount} of your 22 insight sources
+    <div className="mt-5" data-testid="credit-row">
+      {/* Label */}
+      <p className="text-xs text-cream/30 font-body mb-2">
+        Powered by {activeCount} of 22 insight sources
       </p>
 
-      {/* Chip container */}
+      {/* Chip container with momentum scroll */}
       <motion.div
+        ref={scrollRef}
         role="toolbar"
         aria-label="Backend intelligence features"
-        className="
-          flex gap-2 p-1 flex-nowrap
-          overflow-x-auto scrollbar-hide
-        "
+        className="flex gap-2 overflow-x-auto scrollbar-hide py-1"
         style={{
-          maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+          maskImage: 'linear-gradient(to right, transparent, black 3%, black 97%, transparent)',
           WebkitMaskImage:
-            'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+            'linear-gradient(to right, transparent, black 3%, black 97%, transparent)',
         }}
         onKeyDown={handleKeyDown}
-        variants={containerVariants}
+        variants={isFirstReveal ? staggerContainer : undefined}
         initial={isFirstReveal ? 'hidden' : undefined}
-        animate={isFirstReveal ? 'show' : undefined}
+        animate={isFirstReveal ? 'visible' : undefined}
       >
         {ALL_FEATURE_IDS.map((feature, index) => {
           const credit = credits.find((c) => c.featureId === feature.id);
           const isActive = credit?.active ?? false;
 
           return (
-            <motion.div
-              key={feature.id}
-              variants={isActive ? activeChipVariants : dormantChipVariants}
-            >
+            <motion.div key={feature.id} variants={isFirstReveal ? staggerItem : undefined}>
               <CreditChip
                 featureId={feature.id}
                 featureName={feature.label}

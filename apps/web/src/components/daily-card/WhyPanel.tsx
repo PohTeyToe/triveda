@@ -5,8 +5,9 @@
  */
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { sectionExpandProps } from '../../lib/animations';
 import { ConvergenceBanner } from './ConvergenceBanner';
 import { TraditionSection } from './TraditionSection';
 
@@ -41,61 +42,65 @@ export function WhyPanel({ convergence, demoDay, onFirstOpen }: WhyPanelProps) {
     }
   };
 
+  // Convergence badge color
+  const badgeBg =
+    convergence.state === 'converged'
+      ? 'bg-teal/15 text-teal'
+      : convergence.state === 'diverged'
+        ? 'bg-amber-500/15 text-amber-400'
+        : 'bg-cream/10 text-cream/50';
+
+  const badgeLabel =
+    convergence.state === 'converged'
+      ? 'Traditions agree'
+      : convergence.state === 'diverged'
+        ? 'Traditions disagree'
+        : 'Partial agreement';
+
   return (
     <div data-testid="why-panel">
-      {/* Toggle button */}
-      {!isOpen && (
-        <button
-          type="button"
-          onClick={handleToggle}
-          aria-expanded={false}
-          aria-controls="why-panel-content"
-          className="
-            font-body text-sm text-teal
-            hover:underline
-            focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
-            rounded py-1
-          "
-        >
-          Why?
-        </button>
-      )}
+      {/* Tappable header */}
+      <button
+        type="button"
+        onClick={handleToggle}
+        aria-expanded={isOpen}
+        aria-controls="why-panel-content"
+        className="
+          w-full flex items-center justify-between py-3
+          min-h-[44px]
+          focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
+          rounded-lg
+        "
+      >
+        <div className="flex items-center gap-3">
+          <span className="font-body text-sm font-medium text-cream/80">Why this food?</span>
+          <span className={`${badgeBg} rounded-full px-2.5 py-0.5 text-xs font-body font-medium`}>
+            {badgeLabel}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-4 h-4 text-cream/40 transition-transform duration-200 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
 
-      <AnimatePresence initial={false}>
+      <AnimatePresence initial={sectionExpandProps.initial}>
         {isOpen && (
           <motion.div
             id="why-panel-content"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={sectionExpandProps.transition}
             style={{ overflow: 'hidden' }}
           >
-            <section className="pt-3" aria-label="Why this food was recommended">
+            <section className="pb-2" aria-label="Why this food was recommended">
               <ConvergenceBanner convergence={convergence} />
 
               <TraditionSection title="Your Constitution" tradition="ayurveda" />
               <TraditionSection title="Your Energy Today" tradition="tcm" />
               <TraditionSection title="The Evidence" tradition="naturopathy" />
-
-              {/* Collapse chevron */}
-              <div className="flex justify-center pt-2">
-                <button
-                  type="button"
-                  onClick={handleToggle}
-                  aria-expanded={true}
-                  aria-controls="why-panel-content"
-                  aria-label="Collapse why panel"
-                  className="
-                    text-neutral-400 hover:text-teal
-                    transition-colors p-1
-                    focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark
-                    rounded
-                  "
-                >
-                  <ChevronUp className="w-5 h-5" />
-                </button>
-              </div>
             </section>
           </motion.div>
         )}

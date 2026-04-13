@@ -1,17 +1,42 @@
 @import "tailwindcss";
 
 @theme {
+  /* ---- Primary ---- */
   --color-teal: #14b8a6;
   --color-teal-soft: #0d9488;
-  --color-dark: #0a0a0a;
-  --color-dark-elevated: #111111;
-  --color-dark-surface: #1a1a1a;
-  --color-dark-border: #2a2a2a;
-  --color-light: #fdfcf9;
-  --color-light-muted: #f5f3ee;
+  --color-teal-glow: rgba(20, 184, 166, 0.15);
+
+  /* ---- Parchment accent (tertiary) ---- */
+  --color-parchment: #ddc2a8;
+  --color-parchment-soft: #a89078;
+
+  /* ---- Status ---- */
   --color-green: #22c55e;
   --color-terracotta: #ed7523;
   --color-sage: #6b8156;
+  --color-amber: #f59e0b;
+
+  /* ---- Dark mode tonal stack (Vedic Manuscript) ---- */
+  --color-dark: #0f0e0d;
+  --color-dark-lowest: #000000;
+  --color-dark-surface: #0f0e0d;
+  --color-dark-surface-low: #141312;
+  --color-dark-elevated: #1b1918;
+  --color-dark-surface-high: #211f1e;
+  --color-dark-surface-highest: #272523;
+  --color-dark-border: #2a2a2a;
+
+  /* ---- Light mode ---- */
+  --color-light: #fdfcf9;
+  --color-light-surface: #ffffff;
+  --color-light-muted: #f5f3ee;
+  --color-light-surface-high: #f0ede8;
+  --color-light-on-surface: #1a1a1a;
+
+  /* ---- On-surface (text) ---- */
+  --color-cream: #eae4e1;
+
+  /* ---- Typography ---- */
   --font-heading: "Crimson Pro", serif;
   --font-body: "DM Sans", sans-serif;
 }
@@ -20,18 +45,63 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Dark mode defaults — light mode overrides */
+/* ---- Dark mode base ---- */
 .dark body {
   background-color: var(--color-dark);
-  color: var(--color-light);
+  color: var(--color-cream);
 }
 
+/* ---- Light mode base ---- */
 body:not(.dark body) {
   background-color: var(--color-light);
-  color: var(--color-dark);
+  color: var(--color-light-on-surface);
 }
 
-/* Scrollbar hide utility for credit row horizontal scroll */
+/* ---- Grain texture overlay ---- */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ---- Glassmorphism utilities ---- */
+.glass {
+  background: rgba(27, 25, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-light {
+  background: rgba(253, 252, 249, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ---- Ghost border (form fields only) ---- */
+.ghost-border {
+  outline: 1px solid rgba(42, 42, 42, 0.18);
+}
+
+.dark .ghost-border {
+  outline: 1px solid rgba(234, 228, 225, 0.15);
+}
+
+/* ---- Ambient shadow ---- */
+.ambient-shadow {
+  box-shadow: 0 8px 40px rgba(27, 25, 24, 0.06);
+}
+
+.dark .ambient-shadow {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* ---- Scrollbar hide ---- */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -40,7 +110,7 @@ body:not(.dark body) {
   display: none;
 }
 
-/* Screen reader only utility */
+/* ---- Screen reader only ---- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -51,4 +121,9 @@ body:not(.dark body) {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ---- Safe area bottom padding ---- */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

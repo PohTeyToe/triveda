@@ -11,6 +11,7 @@ import { Toaster } from 'sonner';
 import { TraditionStreamProvider } from '../../contexts/TraditionStreamContext';
 import { useDailyFood } from '../../hooks/useDailyFood';
 import { useDemoDay } from '../../hooks/useDemoDay';
+import { slideDownEntrance } from '../../lib/animations';
 import { DailyCardErrorFallback } from './DailyCardErrorBoundary';
 import { DailyCardHeader } from './DailyCardHeader';
 import { DailyFoodCard } from './DailyFoodCard';
@@ -61,72 +62,72 @@ function DailyCardContent({
   };
 
   return (
-    <main>
-      <div className="max-w-2xl mx-auto">
-        <LayoutGroup>
-          {isPending || !data ? (
-            <SkeletonDailyCard />
-          ) : (
-            <>
+    <main className="pb-28">
+      <LayoutGroup>
+        {isPending || !data ? (
+          <SkeletonDailyCard />
+        ) : (
+          <>
+            <motion.div {...slideDownEntrance}>
               <DailyCardHeader
                 date={data.date}
                 seasonLabel={data.seasonLabel}
                 weatherSummary={data.weatherSummary}
               />
+            </motion.div>
 
-              {/* aria-live region for screen reader announcements on day change */}
-              <div aria-live="polite">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={demoDay.day}
-                    initial={{
-                      x: demoDay.direction === 'forward' ? 80 : -80,
-                      opacity: 0,
-                    }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{
-                      x: demoDay.direction === 'forward' ? -80 : 80,
-                      opacity: 0,
-                    }}
-                    transition={{
-                      type: 'tween',
-                      duration: 0.25,
-                    }}
-                  >
-                    <div className="mt-3">
-                      <DailyFoodCard
-                        food={data.food}
-                        rationale={data.rationale}
-                        suggestionId={data.suggestionId}
-                        feedbackState={data.feedback}
-                        userId={userId}
-                        demoDay={demoDay.day}
-                        apiUrl={apiUrl}
-                        authToken={authToken}
-                      />
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+            {/* aria-live region for screen reader announcements on day change */}
+            <div aria-live="polite">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={demoDay.day}
+                  initial={{
+                    x: demoDay.direction === 'forward' ? 80 : -80,
+                    opacity: 0,
+                  }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{
+                    x: demoDay.direction === 'forward' ? -80 : 80,
+                    opacity: 0,
+                  }}
+                  transition={{
+                    type: 'tween',
+                    duration: 0.25,
+                  }}
+                >
+                  <div className="mt-4">
+                    <DailyFoodCard
+                      food={data.food}
+                      rationale={data.rationale}
+                      suggestionId={data.suggestionId}
+                      feedbackState={data.feedback}
+                      userId={userId}
+                      demoDay={demoDay.day}
+                      apiUrl={apiUrl}
+                      authToken={authToken}
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-              {/* Why panel */}
-              <div className="mt-3">
-                <WhyPanel
-                  convergence={data.convergence}
-                  demoDay={demoDay.day}
-                  onFirstOpen={handleWhyFirstOpen}
-                />
-              </div>
+            {/* Why panel */}
+            <div className="mt-4">
+              <WhyPanel
+                convergence={data.convergence}
+                demoDay={demoDay.day}
+                onFirstOpen={handleWhyFirstOpen}
+              />
+            </div>
 
-              {/* Credit row -- visible after first Why panel open */}
-              <TwentyTwoFeatureCreditRow credits={data.credits} visible={creditRowVisible} />
-            </>
-          )}
-        </LayoutGroup>
+            {/* Credit row -- visible after first Why panel open */}
+            <TwentyTwoFeatureCreditRow credits={data.credits} visible={creditRowVisible} />
+          </>
+        )}
+      </LayoutGroup>
 
-        {/* Day travel control (demo only) */}
-        <DayTravelControl demoDay={demoDay} />
-      </div>
+      {/* Day travel control (demo only) */}
+      <DayTravelControl demoDay={demoDay} />
     </main>
   );
 }
