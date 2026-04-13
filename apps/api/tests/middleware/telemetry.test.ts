@@ -87,7 +87,7 @@ describe('Telemetry middleware', () => {
 
     expect(capturedRows).toHaveLength(1);
     // Demo mode auto-authenticates with fixture user
-    expect(capturedRows[0]?.user_id).toBe('demo-user-00000000-0000-0000-0000-000000000000');
+    expect(capturedRows[0]?.user_id).toBe('00000000-0000-0000-0000-000000000001');
   });
 
   it('telemetry insert failure does not affect HTTP response', async () => {

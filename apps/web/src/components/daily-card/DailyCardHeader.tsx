@@ -18,8 +18,20 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 // Dev-only Sanskrit term check
 const BLOCKED_TERMS = ['Ritu', 'Vasanta', 'Sharad', 'Grishma', 'Hemanta', 'Shishira', 'Varsha'];
 
-export function DailyCardHeader({ date, seasonLabel, weatherSummary }: DailyCardHeaderProps) {
-  const dateObj = new Date(`${date}T12:00:00`);
+export function DailyCardHeader({
+  date,
+  seasonLabel = '',
+  weatherSummary = '',
+}: DailyCardHeaderProps) {
+  const dateObj = date ? new Date(`${date}T12:00:00`) : new Date();
+  // Guard against invalid date strings
+  if (Number.isNaN(dateObj.getTime())) {
+    return (
+      <div className="py-4" data-testid="daily-card-header">
+        <p className="font-body text-xs text-cream/40">Today</p>
+      </div>
+    );
+  }
   const weekday = weekdayFormatter.format(dateObj);
   const formattedDate = dateFormatter.format(dateObj);
 

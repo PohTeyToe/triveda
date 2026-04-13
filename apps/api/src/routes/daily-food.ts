@@ -6,6 +6,8 @@
  * on the Accept header.
  */
 
+import { userProfiles } from '@triveda/db';
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { z } from 'zod';
@@ -20,8 +22,8 @@ import { getDb } from './helpers/db.js';
 
 const DailyFoodQuerySchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD format'),
-  lat: z.coerce.number().min(-90).max(90),
-  lon: z.coerce.number().min(-180).max(180),
+  lat: z.coerce.number().min(-90).max(90).optional(),
+  lon: z.coerce.number().min(-180).max(180).optional(),
 });
 
 // ---------------------------------------------------------------------------
@@ -51,8 +53,21 @@ dailyFood.get('/', async (c) => {
     );
   }
 
-  const { date, lat, lon } = query.data;
+  const { date } = query.data;
+  let { lat, lon } = query.data;
   const db = getDb();
+
+  // Fall back to user profile location if lat/lon not provided in query
+  if (lat == null || lon == null) {
+    const profileRows = await db
+      .select({ lat: userProfiles.lat, lon: userProfiles.lon })
+      .from(userProfiles)
+      .where(eq(userProfiles.user_id, user.id))
+      .limit(1);
+    const profile = profileRows[0];
+    lat = lat ?? (profile?.lat ? Number(profile.lat) : 40);
+    lon = lon ?? (profile?.lon ? Number(profile.lon) : -74);
+  }
 
   const params = { userId: user.id, date, lat, lon, requestId, db };
 

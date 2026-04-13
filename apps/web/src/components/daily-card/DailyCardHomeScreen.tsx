@@ -1,14 +1,12 @@
 /**
  * DailyCardHomeScreen -- top-level shell component composing all
- * Daily Card sub-components. Wrapped in ErrorBoundary and
- * TraditionStreamProvider.
+ * Daily Card sub-components. Wrapped in ErrorBoundary.
  */
 
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from 'sonner';
-import { TraditionStreamProvider } from '../../contexts/TraditionStreamContext';
 import { useDailyFood } from '../../hooks/useDailyFood';
 import { useDemoDay } from '../../hooks/useDemoDay';
 import { slideDownEntrance } from '../../lib/animations';
@@ -31,21 +29,14 @@ export function DailyCardHomeScreen({ userId, authToken, apiUrl }: DailyCardHome
 
   return (
     <ErrorBoundary FallbackComponent={DailyCardErrorFallback}>
-      <TraditionStreamProvider
-        userId={userId}
-        demoDay={demoDay.day}
-        authToken={authToken}
-        apiUrl={apiUrl}
-      >
-        <DailyCardContent userId={userId} authToken={authToken} apiUrl={apiUrl} demoDay={demoDay} />
-      </TraditionStreamProvider>
+      <DailyCardContent userId={userId} authToken={authToken} apiUrl={apiUrl} demoDay={demoDay} />
       <Toaster position="bottom-center" />
     </ErrorBoundary>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Inner content (needs TraditionStreamProvider above)
+// Inner content
 // ---------------------------------------------------------------------------
 
 function DailyCardContent({

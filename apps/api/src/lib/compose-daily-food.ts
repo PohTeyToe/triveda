@@ -490,13 +490,40 @@ export async function* composeDailyFoodSSE(
       ? 'Continue your constitutional assessment to get more personalized recommendations.'
       : null;
 
+  // Build convergence stub (full convergence requires LLM output)
+  const convergenceStub = {
+    state: 'converged' as const,
+    dimensions: [
+      { name: 'thermal', agrees: true },
+      { name: 'taste', agrees: true },
+      { name: 'season', agrees: true },
+    ],
+  };
+
   // Emit food_selected immediately (before LLM)
   yield {
     event: 'food_selected' as const,
     data: {
-      food: selectedFood,
+      food: {
+        id: selectedFood.foodId,
+        name: selectedFood.foodName,
+        properties: {
+          thermal: selectedFoodRow?.thermal_nature ?? undefined,
+          taste: selectedFoodRow?.primary_rasa ?? undefined,
+          season: seasonal.ayurvedaRitu ?? undefined,
+        },
+      },
+      rationale:
+        selectedFood.breakdown?.constitutional?.rationale ??
+        'Selected based on your constitutional profile.',
+      convergence: convergenceStub,
       credits: selectedFood.credits,
       profilingQuestion,
+      seasonLabel: seasonal.ayurvedaRitu ?? 'vasanta',
+      weatherSummary: 'Clear skies',
+      date,
+      suggestionId: selectedFood.foodId,
+      feedback: null,
     },
   };
 
