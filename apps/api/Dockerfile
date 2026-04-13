@@ -13,6 +13,12 @@ COPY packages/shared/api-client/package.json packages/shared/api-client/
 COPY packages/db/package.json packages/db/
 RUN pnpm install --frozen-lockfile
 COPY . .
+# Dereference pnpm workspace symlinks so Bun bundler can resolve deep imports
+RUN rm -rf node_modules/@triveda && \
+    mkdir -p node_modules/@triveda && \
+    cp -rL packages/shared node_modules/@triveda/shared && \
+    cp -rL packages/db node_modules/@triveda/db && \
+    cp -rL packages/shared/api-client node_modules/@triveda/api-client
 RUN pnpm --filter @triveda/api build
 
 # Stage 2: Slim Bun runtime
