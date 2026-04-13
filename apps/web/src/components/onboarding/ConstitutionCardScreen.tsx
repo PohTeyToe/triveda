@@ -9,6 +9,7 @@ import { Link, useSearch } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { useConstitutionProfile } from '../../hooks/useConstitutionProfile';
 import {
   constitutionRevealProps,
@@ -16,6 +17,7 @@ import {
   staggerContainer,
   staggerItem,
 } from '../../lib/animations';
+import { ShareButton } from '../share/ShareButton';
 import { ConstitutionSkeleton } from './ConstitutionSkeleton';
 import { ErrorBanner, getErrorMessage } from './ErrorBanner';
 
@@ -77,6 +79,7 @@ const TRADITION_SECTIONS = [
 ] as const;
 
 export function ConstitutionCardScreen() {
+  const { user } = useAuth();
   const { profile, isLoading, isError, error } = useConstitutionProfile();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const announceRef = useRef<HTMLDivElement>(null);
@@ -144,6 +147,13 @@ export function ConstitutionCardScreen() {
           {profile.plain_language_summary}
         </p>
       </div>
+
+      {/* Share button */}
+      {user && (
+        <div className="flex justify-end">
+          <ShareButton constitutionId={user.id} summary={profile.plain_language_summary} />
+        </div>
+      )}
 
       {/* 2x2 insight grid */}
       <motion.div

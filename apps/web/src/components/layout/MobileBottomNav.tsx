@@ -1,11 +1,12 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
-import { Compass, Home, Search, User } from 'lucide-react';
+import { ClipboardCheck, Compass, Home, Search, User } from 'lucide-react';
 import { bottomNavEntrance } from '../../lib/animations';
 
 const TAB_ITEMS = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/constitution', label: 'Profile', icon: Compass },
+  { to: '/check-in', label: 'Check-in', icon: ClipboardCheck },
   { to: '/browse', label: 'Browse', icon: Search },
   { to: '/settings', label: 'Settings', icon: User },
 ] as const;
