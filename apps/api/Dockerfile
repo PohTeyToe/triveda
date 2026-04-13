@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 
 # Use bun install for workspace resolution (no symlink issues)
-RUN bun install --frozen-lockfile
+RUN bun install
 
 EXPOSE 3001
 CMD ["bun", "run", "apps/api/src/index.ts"]
