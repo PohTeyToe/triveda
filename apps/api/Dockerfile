@@ -1,8 +1,8 @@
 # Single stage: Bun runs TypeScript directly, no bundling needed
 FROM oven/bun:1.3-slim
 
-# pnpm for workspace resolution
-RUN npm i -g pnpm@9.15.9
+# pnpm for workspace resolution (bun has built-in npm-compatible installer)
+RUN bun i -g pnpm@9.15.9
 
 WORKDIR /app
 
