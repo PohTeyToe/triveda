@@ -52,8 +52,31 @@ jobs:
       - name: Test (Vitest)
         run: pnpm test
 
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage/
+            packages/*/coverage/
+            apps/*/coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: Build
         run: pnpm build
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            apps/web/dist/
+            apps/api/dist/
+          retention-days: 3
+          if-no-files-found: ignore
 
   api-test:
     name: API Tests (Bun)

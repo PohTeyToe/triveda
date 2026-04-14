@@ -1,0 +1,63 @@
+name: Update Visual Snapshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you updating the baselines?'
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @triveda/web exec playwright install --with-deps chromium firefox
+
+      - name: Regenerate visual baselines
+        env:
+          E2E_BASE_URL: ${{ vars.E2E_BASE_URL }}
+        run: pnpm --filter @triveda/web test:visual:update
+
+      - name: Check for changes
+        id: diff
+        run: |
+          git add apps/web/tests/visual/__snapshots__ || true
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push updated baselines
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "Abdallah Safi"
+          git config user.email "abdallahsafi99@gmail.com"
+          git commit -m "chore(visual): update baselines — ${{ github.event.inputs.reason }}"
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Report no-op
+        if: steps.diff.outputs.changed == 'false'
+        run: echo "No baseline changes detected."
