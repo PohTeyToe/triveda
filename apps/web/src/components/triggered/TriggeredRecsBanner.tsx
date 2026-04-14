@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
 import { apiFetch } from '../../lib/api-client';
+import { BreathworkWalkthrough } from './BreathworkWalkthrough';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -57,13 +58,22 @@ export function useTriggeredRecs() {
 export function TriggeredRecsBanner() {
   const { data } = useTriggeredRecs();
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [walkthroughOpen, setWalkthroughOpen] = useState<string | null>(null);
 
   const visible = (data?.triggers ?? []).filter((t) => t.display && !dismissed.has(t.type));
+  const walkthroughTrigger = visible.find((t) => t.type === walkthroughOpen);
 
   if (visible.length === 0) return null;
 
   return (
     <div className="mb-4" data-testid="triggered-recs-banner">
+      {walkthroughTrigger?.recommendation.learnMore && (
+        <BreathworkWalkthrough
+          template={walkthroughTrigger.recommendation.learnMore}
+          open={true}
+          onClose={() => setWalkthroughOpen(null)}
+        />
+      )}
       <AnimatePresence initial={false}>
         {visible.map((trigger) => (
           <motion.div
@@ -113,7 +123,12 @@ export function TriggeredRecsBanner() {
 
             {/* Learn more (breathwork / herb details) */}
             {trigger.recommendation.learnMore && (
-              <div className="mt-3 flex items-center gap-2 rounded-lg bg-cream/[0.03] border border-cream/5 px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setWalkthroughOpen(trigger.type)}
+                className="mt-3 flex w-full items-center gap-2 rounded-lg bg-cream/[0.03] border border-cream/5 px-3 py-2 text-left hover:border-teal-400/40 hover:bg-teal-400/5 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-400/60"
+                aria-label={`Open ${trigger.recommendation.learnMore.name} walkthrough`}
+              >
                 <Sparkles size={14} className="text-teal-300/80 shrink-0" strokeWidth={2} />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-cream/90 truncate font-body">
@@ -125,7 +140,7 @@ export function TriggeredRecsBanner() {
                     {trigger.recommendation.tradition}
                   </p>
                 </div>
-              </div>
+              </button>
             )}
           </motion.div>
         ))}
