@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { useDailyFood } from '../../hooks/useDailyFood';
 import { useDemoDay } from '../../hooks/useDemoDay';
 import { slideDownEntrance } from '../../lib/animations';
+import { DailyProfilingQuestion } from '../onboarding/DailyProfilingQuestion';
 import { TriggeredRecsBanner } from '../triggered/TriggeredRecsBanner';
 import { DailyCardErrorFallback } from './DailyCardErrorBoundary';
 import { DailyCardHeader } from './DailyCardHeader';
@@ -68,6 +69,8 @@ function DailyCardContent({
         ) : (
           <>
             <TriggeredRecsBanner />
+
+            <DailyProfilingQuestion />
 
             <motion.div {...slideDownEntrance}>
               <p

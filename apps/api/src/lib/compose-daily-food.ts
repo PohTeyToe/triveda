@@ -10,9 +10,18 @@
  * Extracted from the route handler for testability.
  */
 
-import { constitutionalProfiles, dailyCheckIns, foodFeedback, foods } from '@triveda/db';
+import {
+  constitutionalProfiles,
+  culturalCuisines,
+  dailyCheckIns,
+  foodFeedback,
+  foods,
+  userProfiles,
+} from '@triveda/db';
 import type { DbClient } from '@triveda/db';
 import type { CreditSource } from '@triveda/shared/src/credits.js';
+import { getCuisineLabel } from '@triveda/shared/src/cuisines/index.js';
+import { computeCulturalBonus } from '@triveda/shared/src/cultural-config/scoring-integration.js';
 import { computeConvergence } from '@triveda/shared/src/engines/convergence.js';
 import { getSeasonalContext } from '@triveda/shared/src/engines/index.js';
 import type {
@@ -39,7 +48,7 @@ import type {
   ScoringContext,
   FoodFeedback as ScoringFeedback,
 } from '@triveda/shared/src/scoring/types.js';
-import { and, eq, gte } from 'drizzle-orm';
+import { and, eq, gte, inArray } from 'drizzle-orm';
 import { Temporal } from 'temporal-polyfill';
 import { createNonStreamingResponse, createSSEStream } from '../llm/index.js';
 import type { SSEOutputEvent } from '../llm/index.js';
@@ -281,7 +290,7 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const [profileRows, feedbackRows, _checkInRows] = await Promise.all([
+  const [profileRows, feedbackRows, _checkInRows, userProfileRows] = await Promise.all([
     db
       .select()
       .from(constitutionalProfiles)
@@ -296,7 +305,10 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
       .from(dailyCheckIns)
       .where(and(eq(dailyCheckIns.user_id, userId), eq(dailyCheckIns.date, date)))
       .limit(1),
+    db.select().from(userProfiles).where(eq(userProfiles.user_id, userId)).limit(1),
   ]);
+
+  const userCuisines = (userProfileRows[0]?.cultural_cuisine_preferences as string[] | null) ?? [];
 
   const constitutionRow = profileRows[0] ?? null;
   const profile: ConstitutionalProfile = constitutionRow
@@ -340,7 +352,43 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
 
   const filtered = filterCandidates(candidates, scoringContext);
   const scored = scoreCandidates(filtered, profile, scoringContext, modifiers);
-  const topN = selectTopN(scored, 1);
+
+  // Cultural bonus: per-food post-score adjustment.
+  // cultural_cuisines.prevalence_tag maps to relationship: 'native' | 'common' | 'fusion' | 'none'.
+  let culturalMap: Map<string, Array<{ cuisine_code: string; relationship: string }>> = new Map();
+  if (userCuisines.length > 0 && scored.length > 0) {
+    const candidateIds = scored.map((s) => s.foodId);
+    const culturalRows = await db
+      .select()
+      .from(culturalCuisines)
+      .where(
+        and(
+          eq(culturalCuisines.entity_type, 'food'),
+          inArray(culturalCuisines.entity_id, candidateIds),
+        ),
+      );
+    culturalMap = culturalRows.reduce((acc, row) => {
+      const key = row.entity_id;
+      const arr = acc.get(key) ?? [];
+      arr.push({ cuisine_code: row.cuisine, relationship: row.prevalence_tag });
+      acc.set(key, arr);
+      return acc;
+    }, new Map<string, Array<{ cuisine_code: string; relationship: string }>>());
+  }
+
+  const scoredWithCultural = scored
+    .map((s) => {
+      const foodCuisines = culturalMap.get(s.foodId) ?? [];
+      const { bonus, matchedCuisines } = computeCulturalBonus(userCuisines, foodCuisines);
+      const boosted = Math.min(1, s.totalScore + bonus);
+      return { ...s, totalScore: boosted, culturalBonus: bonus, matchedCuisines };
+    })
+    .sort((a, b) => {
+      const diff = b.totalScore - a.totalScore;
+      return diff !== 0 ? diff : a.foodId.localeCompare(b.foodId);
+    });
+
+  const topN = scoredWithCultural.slice(0, 1);
 
   if (topN.length === 0) {
     throw new Error('No foods available after filtering');
@@ -351,6 +399,17 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
     throw new Error('No foods available after filtering');
   }
   const selectedFoodRow = allFoods.find((f) => f.id === selectedFood.foodId);
+
+  // Append cultural match credit to the selected food's credits
+  if (selectedFood.culturalBonus > 0 && selectedFood.matchedCuisines.length > 0) {
+    const labels = selectedFood.matchedCuisines.map(getCuisineLabel).join(', ');
+    selectedFood.credits.push({
+      featureId: 'cultural-match',
+      featureName: 'Cultural Match',
+      active: true,
+      contribution: `Nudged by ${labels} cuisine preference (+${selectedFood.culturalBonus.toFixed(2)})`,
+    });
+  }
 
   // Convergence
   const convergenceInput = {
