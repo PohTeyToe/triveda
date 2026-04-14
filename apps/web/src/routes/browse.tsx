@@ -1,4 +1,5 @@
 import { createFileRoute, useSearch } from '@tanstack/react-router';
+import { Toaster } from 'sonner';
 import { BrowseScreen } from '../components/profile-browse/BrowseScreen';
 import { FoodDetailScreen } from '../components/profile-browse/FoodDetailScreen';
 import { HerbDetailScreen } from '../components/profile-browse/HerbDetailScreen';
@@ -32,5 +33,10 @@ function BrowsePage() {
   }
 
   // Browse list
-  return <BrowseScreen />;
+  return (
+    <>
+      <BrowseScreen />
+      <Toaster position="bottom-center" />
+    </>
+  );
 }
