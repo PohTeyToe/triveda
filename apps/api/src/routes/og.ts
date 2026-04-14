@@ -117,6 +117,22 @@ ogRouter.get('/constitution/:id', async (c) => {
     const png = await renderOgImage(ConstitutionCardOG(props));
     const renderTimeMs = performance.now() - startTime;
 
+    // og_image_rendered telemetry (fire-and-forget, structured log).
+    try {
+      console.log(
+        JSON.stringify({
+          type: 'client_telemetry',
+          event_type: 'og_image_rendered',
+          constitution_id: id,
+          render_time_ms: Math.round(renderTimeMs),
+          cache_hit: false,
+          timestamp: new Date().toISOString(),
+        }),
+      );
+    } catch {
+      // never surface to response
+    }
+
     return pngResponse(
       c,
       png,
