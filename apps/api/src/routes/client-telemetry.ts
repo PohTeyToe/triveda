@@ -5,13 +5,17 @@
  * No auth required. Used by ShareButton / ShareModal to record:
  *   - share_initiated  { constitution_id, platform, timestamp }
  *   - share_completed  { constitution_id, timestamp }
+ *   - og_image_rendered { constitution_id, render_time_ms, cache_hit }
  *
- * Accepts any JSON payload with an `event_type` string. Events are logged
- * to stdout in JSON (consumed by Railway log drains). Failures never surface
+ * Accepts any JSON payload with an `event_type` string. Writes a row to the
+ * `telemetry` table (event_type + payload columns) when the DB is available,
+ * and always emits a structured stdout log as a backup. Failures never surface
  * to the client -- always returns 204 No Content.
  */
 
+import { telemetry as telemetryTable } from '@triveda/db';
 import { Hono } from 'hono';
+import { getDb } from './helpers/db.js';
 
 const ALLOWED_EVENT_TYPES = new Set(['share_initiated', 'share_completed', 'og_image_rendered']);
 
@@ -35,6 +39,26 @@ clientTelemetry.post('/', async (c) => {
         ...body,
       }),
     );
+
+    // Fire-and-forget DB write. Never awaited -- response returns immediately.
+    try {
+      const db = getDb();
+      const userId = typeof body.user_id === 'string' ? body.user_id : null;
+      void db
+        .insert(telemetryTable)
+        .values({
+          event_type: eventType,
+          user_id: userId,
+          payload: body,
+          // legacy request-metric columns left null for event rows
+        })
+        .catch((err: unknown) => {
+          console.error('client-telemetry DB insert failed:', (err as Error).message);
+        });
+    } catch (err) {
+      // DB unavailable (demo mode, no DATABASE_URL) -- log-only is acceptable.
+      console.error('client-telemetry DB unavailable:', (err as Error).message);
+    }
   } catch {
     // Swallow all errors -- client telemetry is best-effort.
   }
