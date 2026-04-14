@@ -9,6 +9,7 @@ import { telemetry } from './middleware/telemetry.js';
 import { bloodWork } from './routes/blood-work.js';
 import { browse } from './routes/browse.js';
 import { checkIn } from './routes/check-in.js';
+import { clientTelemetry } from './routes/client-telemetry.js';
 import { constitutionMeta } from './routes/constitution-meta.js';
 import { constitution } from './routes/constitution.js';
 import { dailyFood } from './routes/daily-food.js';
@@ -64,6 +65,7 @@ export function createApp() {
   app.route('/weather', weather);
   app.route('/api/og', ogRouter);
   app.route('/api/v1/constitution', constitutionMeta);
+  app.route('/api/v1/telemetry', clientTelemetry);
 
   // 6. Auth middleware for all other routes
   app.use('/api/*', auth);
