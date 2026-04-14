@@ -15,6 +15,7 @@ import { dailyFood } from './routes/daily-food.js';
 import { faceScan } from './routes/face-scan.js';
 import { feedbackRoute } from './routes/food-feedback.js';
 import { health } from './routes/health.js';
+import { llmExtendFood } from './routes/llm-extend-food.js';
 import { ogRouter } from './routes/og.js';
 import { profile } from './routes/profile.js';
 import { seasonal } from './routes/seasonal.js';
@@ -80,6 +81,7 @@ export function createApp() {
   app.route('/api/v1/blood-work', bloodWork);
   app.route('/api/v1/weekly-herb', weeklyHerb);
   app.route('/api/v1/triggered-recs', triggeredRecs);
+  app.route('/api/v1/llm', llmExtendFood);
 
   // --- OpenAPI documentation (non-production only) ---
   const isProduction = process.env.NODE_ENV === 'production';
