@@ -1,0 +1,77 @@
+name: Deploy Frontend (Vercel Production)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/shared/**'
+      - 'packages/shared/api-client/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VITE_ENABLE_DEMO_MODE: 'false'
+      VITE_API_URL: 'https://triveda-api-production.up.railway.app'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Amend commit author (Vercel Hobby workaround)
+        run: |
+          git config user.email "abdullahsf2001@gmail.com"
+          git config user.name "Abdallah Safi"
+          git commit --amend --no-edit --reset-author
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel
+
+      - name: Pull Vercel config (production)
+        run: vercel pull --yes --environment=production --token=$VERCEL_TOKEN --scope=abdallah-safis-projects-bae5f9c3
+        working-directory: apps/web
+
+      - name: Build (production)
+        run: vercel build --prod --token=$VERCEL_TOKEN
+        working-directory: apps/web
+
+      - name: Deploy (production)
+        id: deploy
+        run: |
+          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN --scope=abdallah-safis-projects-bae5f9c3 > deploy-url.txt
+          url=$(tail -n 1 deploy-url.txt)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+        working-directory: apps/web
+
+      - name: Commit status
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'success',
+              description: 'Vercel production deploy succeeded',
+              context: 'vercel/deploy',
+              target_url: '${{ steps.deploy.outputs.url }}',
+            });
