@@ -1,20 +1,23 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import {
   prefetchFoodDetail,
   prefetchHerbDetail,
   useFoodsBrowse,
   useHerbsBrowse,
 } from '../../hooks/profile-browse';
+import { useLlmExtendFood } from '../../hooks/useLlmExtendFood';
 import { staggerContainer } from '../../lib/animations';
 import type { BrowseFood, BrowseHerb } from '../../lib/types';
 import { type BrowseFilters, FilterSheet } from './FilterSheet';
 import { FoodCard } from './FoodCard';
 import { HerbCard } from './HerbCard';
 import { ListShell } from './ListShell';
+import { LlmExtendPanel } from './LlmExtendPanel';
 import { TabShell } from './TabShell';
 
 // ---- Category Constants ----
@@ -156,7 +159,12 @@ function FilterChipRow({
 
 // ---- Foods Tab Content ----
 
-function FoodsTab({ filters }: { filters: BrowseFilters }) {
+interface FoodsTabProps {
+  filters: BrowseFilters;
+  onGenerateFood: (query: string) => void;
+}
+
+function FoodsTab({ filters, onGenerateFood }: FoodsTabProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { allItems, hasNextPage, isFetchingNextPage, fetchNextPage } = useFoodsBrowse({
@@ -179,6 +187,8 @@ function FoodsTab({ filters }: { filters: BrowseFilters }) {
     [queryClient],
   );
 
+  const hasActiveSearch = !!filters.search?.trim();
+
   return (
     <ListShell<BrowseFood>
       items={allItems}
@@ -196,9 +206,27 @@ function FoodsTab({ filters }: { filters: BrowseFilters }) {
         />
       )}
       emptyState={
-        <div className="text-center py-12 text-cream/40">
-          <p className="font-body">No foods in this category.</p>
-        </div>
+        hasActiveSearch ? (
+          <div className="text-center py-12" data-testid="foods-zero-result">
+            <p className="font-body text-cream/70 mb-1">
+              No foods found for &ldquo;{filters.search}&rdquo;
+            </p>
+            <p className="text-sm text-cream/40 mb-4">Want Triveda to learn about this food?</p>
+            <button
+              type="button"
+              onClick={() => filters.search && onGenerateFood(filters.search)}
+              className="inline-flex items-center gap-2 rounded-full border border-teal text-teal px-5 py-2.5 text-sm font-body font-medium hover:bg-teal/10 transition-colors min-h-[44px]"
+              data-testid="generate-food-button"
+            >
+              <Sparkles className="w-4 h-4" aria-hidden="true" />
+              Generate entry via AI
+            </button>
+          </div>
+        ) : (
+          <div className="text-center py-12 text-cream/40">
+            <p className="font-body">No foods in this category.</p>
+          </div>
+        )
       }
     />
   );
@@ -267,6 +295,46 @@ export function BrowseScreen() {
   const currentFilters = activeTab === 'foods' ? foodFilters : herbFilters;
   const currentCategories = activeTab === 'foods' ? FOOD_CATEGORIES : HERB_CATEGORIES;
 
+  // ---- LLM extend panel state ----
+  const llm = useLlmExtendFood();
+  const [llmPanelOpen, setLlmPanelOpen] = useState(false);
+  const [savedIds, setSavedIds] = useState<Set<string>>(() => new Set());
+
+  const handleGenerateFood = useCallback(
+    (query: string) => {
+      llm.trigger(query);
+      setLlmPanelOpen(true);
+    },
+    [llm],
+  );
+
+  const handleClosePanel = useCallback(() => {
+    setLlmPanelOpen(false);
+    // Reset on close so a future trigger starts fresh
+    llm.reset();
+  }, [llm]);
+
+  const handleSaveGenerated = useCallback(() => {
+    if (!llm.generatedFood) return;
+    const id = llm.generatedFood.id;
+    if (savedIds.has(id)) return;
+    setSavedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    toast.success('Saved to your browse history.');
+  }, [llm.generatedFood, savedIds]);
+
+  const handleNavigateToMatch = useCallback(
+    (foodId: string) => {
+      setLlmPanelOpen(false);
+      llm.reset();
+      navigate({ to: '/browse', search: { tab: 'foods', food: foodId, herb: '' } });
+    },
+    [llm, navigate],
+  );
+
   const handleTabChange = useCallback(
     (tabId: string) => {
       navigate({ to: '/browse', search: { tab: tabId, food: '', herb: '' } });
@@ -328,13 +396,28 @@ export function BrowseScreen() {
 
           <TabShell tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange}>
             {activeTab === 'foods' ? (
-              <FoodsTab filters={foodFilters} />
+              <FoodsTab filters={foodFilters} onGenerateFood={handleGenerateFood} />
             ) : (
               <HerbsTab filters={herbFilters} />
             )}
           </TabShell>
         </div>
       </div>
+
+      {/* LLM-on-demand extend panel */}
+      <LlmExtendPanel
+        isOpen={llmPanelOpen}
+        onClose={handleClosePanel}
+        status={llm.status}
+        progress={llm.progress}
+        generatedFood={llm.generatedFood}
+        error={llm.error}
+        query={llm.query}
+        onRetry={llm.retry}
+        onSave={handleSaveGenerated}
+        onNavigateToMatch={handleNavigateToMatch}
+        isSaved={llm.generatedFood ? savedIds.has(llm.generatedFood.id) : false}
+      />
     </motion.div>
   );
 }
