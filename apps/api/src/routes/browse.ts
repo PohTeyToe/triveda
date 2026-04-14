@@ -100,4 +100,38 @@ browse.get('/herbs/browse', async (c) => {
   return c.json({ items: pageItems, nextCursor });
 });
 
+/**
+ * GET /foods/:id -- fetch a single food by ID.
+ */
+browse.get('/foods/:id', async (c) => {
+  const id = c.req.param('id');
+  const db = getDb();
+
+  const rows = await db.select().from(foods).where(eq(foods.id, id)).limit(1);
+  const food = rows[0];
+
+  if (!food) {
+    return c.json({ error: 'Food not found' }, 404);
+  }
+
+  return c.json(food);
+});
+
+/**
+ * GET /herbs/:id -- fetch a single herb by ID.
+ */
+browse.get('/herbs/:id', async (c) => {
+  const id = c.req.param('id');
+  const db = getDb();
+
+  const rows = await db.select().from(herbs).where(eq(herbs.id, id)).limit(1);
+  const herb = rows[0];
+
+  if (!herb) {
+    return c.json({ error: 'Herb not found' }, 404);
+  }
+
+  return c.json(herb);
+});
+
 export { browse };

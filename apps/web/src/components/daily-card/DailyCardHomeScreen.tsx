@@ -4,12 +4,13 @@
  */
 
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from 'sonner';
 import { useDailyFood } from '../../hooks/useDailyFood';
 import { useDemoDay } from '../../hooks/useDemoDay';
 import { slideDownEntrance } from '../../lib/animations';
+import { TriggeredRecsBanner } from '../triggered/TriggeredRecsBanner';
 import { DailyCardErrorFallback } from './DailyCardErrorBoundary';
 import { DailyCardHeader } from './DailyCardHeader';
 import { DailyFoodCard } from './DailyFoodCard';
@@ -48,6 +49,13 @@ function DailyCardContent({
   const { data, isPending } = useDailyFood(userId, demoDay.day);
   const [creditRowVisible, setCreditRowVisible] = useState(false);
 
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
+
   const handleWhyFirstOpen = () => {
     setCreditRowVisible(true);
   };
@@ -59,7 +67,15 @@ function DailyCardContent({
           <SkeletonDailyCard />
         ) : (
           <>
+            <TriggeredRecsBanner />
+
             <motion.div {...slideDownEntrance}>
+              <p
+                className="font-body text-xs uppercase tracking-[0.18em] text-teal/70 pt-4"
+                data-testid="daily-greeting"
+              >
+                {greeting}
+              </p>
               <DailyCardHeader
                 date={data.date}
                 seasonLabel={data.seasonLabel}
@@ -118,7 +134,19 @@ function DailyCardContent({
       </LayoutGroup>
 
       {/* Day travel control (demo only) */}
-      <DayTravelControl demoDay={demoDay} />
+      <div className="mt-8">
+        <DayTravelControl demoDay={demoDay} />
+      </div>
+
+      {/* Brand footer */}
+      <footer className="mt-10 pt-6 border-t border-cream/10 text-center" data-testid="home-footer">
+        <p className="font-body text-[11px] uppercase tracking-[0.22em] text-cream/35">
+          Powered by three traditions
+        </p>
+        <p className="font-heading text-sm italic text-cream/50 mt-1.5">
+          Ayurveda · Traditional Chinese Medicine · Naturopathy
+        </p>
+      </footer>
     </main>
   );
 }

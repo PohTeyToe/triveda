@@ -27,7 +27,7 @@ export function DailyCardHeader({
   // Guard against invalid date strings
   if (Number.isNaN(dateObj.getTime())) {
     return (
-      <div className="py-4" data-testid="daily-card-header">
+      <div className="pb-4 pt-1" data-testid="daily-card-header">
         <p className="font-body text-xs text-cream/40">Today</p>
       </div>
     );
@@ -47,7 +47,7 @@ export function DailyCardHeader({
   }
 
   return (
-    <div className="py-4" data-testid="daily-card-header">
+    <div className="pb-4 pt-1" data-testid="daily-card-header">
       <p className="font-body text-xs uppercase tracking-wider text-cream/40">{weekday}</p>
       <div className="flex items-baseline gap-2 mt-0.5">
         <h1 className="font-heading text-xl font-bold text-cream">{formattedDate}</h1>

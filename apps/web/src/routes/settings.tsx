@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { ChevronRight, LogOut, Moon, Sun, User } from 'lucide-react';
+import { ChevronRight, LogOut, Moon, ScanFace, Sun, User } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { isDemoMode } from '../lib/env';
@@ -48,6 +48,18 @@ function SettingsPage() {
             <span className="font-body text-sm text-cream dark:text-cream text-dark">
               Dietary preferences
             </span>
+            <ChevronRight className="w-4 h-4 text-cream/40" />
+          </Link>
+          <Link
+            to="/face-scan"
+            className="flex items-center justify-between p-4 hover:bg-teal/5 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <ScanFace className="w-5 h-5 text-cream/60 dark:text-cream/60" />
+              <span className="font-body text-sm text-cream dark:text-cream text-dark">
+                Face scan
+              </span>
+            </div>
             <ChevronRight className="w-4 h-4 text-cream/40" />
           </Link>
         </div>
