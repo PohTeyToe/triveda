@@ -7,7 +7,7 @@
   "rewrites": [
     { "source": "/c/:id", "has": [{ "type": "query", "key": "_bypass" }], "destination": "/index.html" },
     { "source": "/c/:id", "destination": "/api/og/:id" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

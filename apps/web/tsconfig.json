@@ -11,6 +11,7 @@
     "declarationMap": false
   },
   "include": ["src"],
+  "exclude": ["api", "dist", "node_modules"],
   "references": [
     { "path": "../../packages/shared" }
   ]
