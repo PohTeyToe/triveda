@@ -1,0 +1,82 @@
+{
+  "vendor": "lifelabs",
+  "rows": [
+    {
+      "name": "Glucose, Fasting",
+      "value": "5.2",
+      "unit": "mmol/L",
+      "range": "3.3 - 5.5"
+    },
+    {
+      "name": "HbA1c",
+      "value": "5.4",
+      "unit": "%",
+      "range": "4.0 - 5.6"
+    },
+    {
+      "name": "LDL Cholesterol",
+      "value": "3.8",
+      "unit": "mmol/L",
+      "range": "< 3.4",
+      "flag": "H"
+    },
+    {
+      "name": "HDL Cholesterol",
+      "value": "1.1",
+      "unit": "mmol/L",
+      "range": "> 1.0"
+    },
+    {
+      "name": "Total Cholesterol",
+      "value": "5.8",
+      "unit": "mmol/L",
+      "range": "< 5.2",
+      "flag": "H"
+    },
+    {
+      "name": "Triglycerides",
+      "value": "1.4",
+      "unit": "mmol/L",
+      "range": "< 1.7"
+    },
+    {
+      "name": "TSH",
+      "value": "2.1",
+      "unit": "mIU/L",
+      "range": "0.4 - 4.0"
+    },
+    {
+      "name": "Ferritin",
+      "value": "18",
+      "unit": "ug/L",
+      "range": "20 - 200",
+      "flag": "L"
+    },
+    {
+      "name": "25-OH Vitamin D",
+      "value": "42",
+      "unit": "nmol/L",
+      "range": "75 - 250",
+      "flag": "L"
+    },
+    {
+      "name": "Vitamin B12",
+      "value": "310",
+      "unit": "pmol/L",
+      "range": "145 - 600"
+    },
+    {
+      "name": "hs-CRP",
+      "value": "3.2",
+      "unit": "mg/L",
+      "range": "< 3.0",
+      "flag": "H"
+    },
+    {
+      "name": "Hemoglobin",
+      "value": "138",
+      "unit": "g/L",
+      "range": "120 - 160"
+    }
+  ]
+}

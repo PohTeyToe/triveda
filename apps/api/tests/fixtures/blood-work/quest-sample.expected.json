@@ -1,0 +1,82 @@
+{
+  "vendor": "quest",
+  "rows": [
+    {
+      "name": "Glucose, Fasting",
+      "value": "92",
+      "unit": "mg/dL",
+      "range": "65 - 99"
+    },
+    {
+      "name": "Hemoglobin A1c",
+      "value": "5.4",
+      "unit": "%",
+      "range": "4.0 - 5.6"
+    },
+    {
+      "name": "LDL Cholesterol",
+      "value": "148",
+      "unit": "mg/dL",
+      "range": "< 130",
+      "flag": "H"
+    },
+    {
+      "name": "HDL Cholesterol",
+      "value": "42",
+      "unit": "mg/dL",
+      "range": "> 40"
+    },
+    {
+      "name": "Cholesterol, Total",
+      "value": "225",
+      "unit": "mg/dL",
+      "range": "< 200",
+      "flag": "H"
+    },
+    {
+      "name": "Triglycerides",
+      "value": "125",
+      "unit": "mg/dL",
+      "range": "< 150"
+    },
+    {
+      "name": "TSH",
+      "value": "2.1",
+      "unit": "uIU/mL",
+      "range": "0.4 - 4.5"
+    },
+    {
+      "name": "Ferritin",
+      "value": "18",
+      "unit": "ng/mL",
+      "range": "20 - 250",
+      "flag": "L"
+    },
+    {
+      "name": "Vitamin D, 25-OH, Total",
+      "value": "17",
+      "unit": "ng/mL",
+      "range": "30 - 100",
+      "flag": "L"
+    },
+    {
+      "name": "Vitamin B12",
+      "value": "420",
+      "unit": "pg/mL",
+      "range": "200 - 900"
+    },
+    {
+      "name": "C-Reactive Protein, Cardiac",
+      "value": "0.32",
+      "unit": "mg/dL",
+      "range": "< 0.30",
+      "flag": "H"
+    },
+    {
+      "name": "Hemoglobin",
+      "value": "13.8",
+      "unit": "g/dL",
+      "range": "12.0 - 16.0"
+    }
+  ]
+}

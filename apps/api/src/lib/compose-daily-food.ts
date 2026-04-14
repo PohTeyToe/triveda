@@ -39,8 +39,10 @@ import type {
 import {
   filterCandidates,
   scoreCandidates,
+  scoreFood,
   selectTopN,
 } from '@triveda/shared/src/scoring/index.js';
+import { computeBloodWorkModifier } from '@triveda/shared/src/scoring/modifiers/blood-work.js';
 import type {
   FoodForScoring,
   ModifierValues,
@@ -52,6 +54,7 @@ import { and, eq, gte, inArray } from 'drizzle-orm';
 import { Temporal } from 'temporal-polyfill';
 import { createNonStreamingResponse, createSSEStream } from '../llm/index.js';
 import type { SSEOutputEvent } from '../llm/index.js';
+import { loadBiomarkerSnapshot } from './load-biomarker-snapshot.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -344,20 +347,17 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
     today: date,
   };
 
-  const modifiers: ModifierValues = {
-    bloodWork: undefined,
-    culturalMatch: undefined,
-    dailyCheckIn: undefined,
-  };
+  // Load latest blood work snapshot + related food mappings once.
+  const { snapshot: biomarkerSnapshot, mappings: biomarkerFoodMappings } =
+    await loadBiomarkerSnapshot(db, userId);
 
   const filtered = filterCandidates(candidates, scoringContext);
-  const scored = scoreCandidates(filtered, profile, scoringContext, modifiers);
 
-  // Cultural bonus: per-food post-score adjustment.
-  // cultural_cuisines.prevalence_tag maps to relationship: 'native' | 'common' | 'fusion' | 'none'.
+  // Cultural map: fetch cultural_cuisines for candidate foods once.
+  // prevalence_tag in DB maps to relationship: 'native' | 'common' | 'fusion' | 'none'.
   let culturalMap: Map<string, Array<{ cuisine_code: string; relationship: string }>> = new Map();
-  if (userCuisines.length > 0 && scored.length > 0) {
-    const candidateIds = scored.map((s) => s.foodId);
+  if (userCuisines.length > 0 && filtered.length > 0) {
+    const candidateIds = filtered.map((f) => f.id);
     const culturalRows = await db
       .select()
       .from(culturalCuisines)
@@ -376,19 +376,37 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
     }, new Map<string, Array<{ cuisine_code: string; relationship: string }>>());
   }
 
-  const scoredWithCultural = scored
-    .map((s) => {
-      const foodCuisines = culturalMap.get(s.foodId) ?? [];
+  // Score per-food: blood-work modifier needs the specific candidate's mappings,
+  // and cultural bonus is a per-food post-score adjustment (capped at 0.10).
+  const scored = filtered
+    .map((food) => {
+      const bloodWork = biomarkerSnapshot
+        ? computeBloodWorkModifier(food.id, biomarkerSnapshot, biomarkerFoodMappings)
+        : undefined;
+      const perFoodModifiers: ModifierValues = {
+        bloodWork,
+        culturalMatch: undefined,
+        dailyCheckIn: undefined,
+      };
+      const base = scoreFood(food, profile, scoringContext, perFoodModifiers);
+      const foodCuisines = culturalMap.get(food.id) ?? [];
       const { bonus, matchedCuisines } = computeCulturalBonus(userCuisines, foodCuisines);
-      const boosted = Math.min(1, s.totalScore + bonus);
-      return { ...s, totalScore: boosted, culturalBonus: bonus, matchedCuisines };
+      return {
+        ...base,
+        totalScore: Math.min(1, base.totalScore + bonus),
+        culturalBonus: bonus,
+        matchedCuisines,
+      };
     })
     .sort((a, b) => {
       const diff = b.totalScore - a.totalScore;
-      return diff !== 0 ? diff : a.foodId.localeCompare(b.foodId);
+      if (diff !== 0) return diff;
+      return a.foodId.localeCompare(b.foodId);
     });
 
-  const topN = scoredWithCultural.slice(0, 1);
+  const topN = selectTopN(scored, 1);
+  // Keep the batch helper referenced so tree-shaking / typecheck stays happy.
+  void scoreCandidates;
 
   if (topN.length === 0) {
     throw new Error('No foods available after filtering');
@@ -524,15 +542,33 @@ export async function* composeDailyFoodSSE(
     today: date,
   };
 
-  const modifiers: ModifierValues = {
-    bloodWork: undefined,
-    culturalMatch: undefined,
-    dailyCheckIn: undefined,
-  };
+  // Load latest blood work snapshot + related food mappings once.
+  const { snapshot: biomarkerSnapshot, mappings: biomarkerFoodMappings } =
+    await loadBiomarkerSnapshot(db, userId);
 
   const filtered = filterCandidates(candidates, scoringContext);
-  const scored = scoreCandidates(filtered, profile, scoringContext, modifiers);
+  // Score per-food so the blood-work modifier can be computed against the
+  // specific candidate's mappings.
+  const scored = filtered
+    .map((food) => {
+      const bloodWork = biomarkerSnapshot
+        ? computeBloodWorkModifier(food.id, biomarkerSnapshot, biomarkerFoodMappings)
+        : undefined;
+      const perFoodModifiers: ModifierValues = {
+        bloodWork,
+        culturalMatch: undefined,
+        dailyCheckIn: undefined,
+      };
+      return scoreFood(food, profile, scoringContext, perFoodModifiers);
+    })
+    .sort((a, b) => {
+      const diff = b.totalScore - a.totalScore;
+      if (diff !== 0) return diff;
+      return a.foodId.localeCompare(b.foodId);
+    });
   const topN = selectTopN(scored, 1);
+  // Keep the batch helper referenced so tree-shaking / typecheck stays happy.
+  void scoreCandidates;
 
   if (topN.length === 0) {
     throw new Error('No foods available after filtering');

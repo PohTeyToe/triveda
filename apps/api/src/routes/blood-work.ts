@@ -15,7 +15,7 @@ import { Hono } from 'hono';
 import type { AuthUser } from '../middleware/auth.js';
 import { AppError } from '../middleware/error.js';
 import { BIOMARKER_TRADITION_CONTEXT } from '../workers/blood-work/canonical-schema.js';
-import { getMockBiomarkers } from '../workers/blood-work/mock-extraction.js';
+import { processBloodWorkJob } from '../workers/blood-work/pipeline.js';
 import { getDb } from './helpers/db.js';
 
 type AppEnv = { Variables: { user: AuthUser } };
@@ -60,7 +60,9 @@ bloodWork.post('/', async (c) => {
   // Generate a job ID
   const jobId = crypto.randomUUID();
 
-  // Create the report row with status=processing (mock pipeline completes instantly)
+  // Create the report row with status=pending — the pipeline flips it to
+  // `processing` as soon as it starts. This prevents the race where the
+  // frontend polls before the pipeline has begun.
   const [report] = await db
     .insert(bloodWorkReports)
     .values({
@@ -68,9 +70,8 @@ bloodWork.post('/', async (c) => {
       job_id: jobId,
       file_name: fileName,
       file_size_bytes: fileSize,
-      status: 'processing',
-      stage: 'extracting_text',
-      started_at: new Date(),
+      status: 'pending',
+      stage: null,
     })
     .returning({ id: bloodWorkReports.id });
 
@@ -78,37 +79,26 @@ bloodWork.post('/', async (c) => {
     throw new AppError(500, 'INTERNAL_ERROR', 'Failed to create report');
   }
 
-  // Mock extraction: insert fixture biomarkers directly
-  const mockBiomarkers = getMockBiomarkers();
+  // Read the file once; the pipeline runs in-process (async fire-and-forget)
+  // so the HTTP response returns immediately. The frontend polls status via
+  // GET /:jobId.
+  const fileBuffer = new Uint8Array(await file.arrayBuffer());
+  const fileType = file.type as 'application/pdf' | 'image/jpeg' | 'image/png';
 
-  for (const bm of mockBiomarkers) {
-    await db.insert(bloodWorkBiomarkers).values({
-      report_id: report.id,
-      canonical_key: bm.canonicalKey,
-      display_name: bm.displayName,
-      value: String(bm.value),
-      unit: bm.unit,
-      original_unit: bm.originalUnit,
-      reference_range_low: bm.referenceRangeLow != null ? String(bm.referenceRangeLow) : null,
-      reference_range_high: bm.referenceRangeHigh != null ? String(bm.referenceRangeHigh) : null,
-      flag: bm.flag,
-      confidence: String(bm.confidence),
-      loinc_code: bm.loincCode,
-    });
-  }
-
-  // Mark report as complete
-  await db
-    .update(bloodWorkReports)
-    .set({
-      status: 'complete',
-      stage: null,
-      vendor: 'unknown',
-      extraction_method: 'text',
-      page_count: 3,
-      processed_at: new Date(),
-    })
-    .where(eq(bloodWorkReports.id, report.id));
+  // Fire-and-forget. Errors inside the pipeline are captured on the report row.
+  void processBloodWorkJob({
+    reportId: report.id,
+    userId: user.id,
+    fileBuffer,
+    fileType,
+    db,
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+  }).catch((err) => {
+    // The pipeline already writes failure state to the DB, but log for
+    // observability. Telemetry within the pipeline redacts PHI.
+    // eslint-disable-next-line no-console
+    console.error('blood-work pipeline crashed:', err instanceof Error ? err.message : err);
+  });
 
   return c.json({ jobId, reportId: report.id });
 });
