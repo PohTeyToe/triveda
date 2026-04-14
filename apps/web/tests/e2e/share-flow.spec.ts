@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 test.describe('share flow', () => {
   test('constitution route renders', async ({ page }) => {

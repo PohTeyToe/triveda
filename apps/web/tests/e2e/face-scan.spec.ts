@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 test.describe('face scan mock', () => {
   test('face-scan route renders', async ({ page }) => {

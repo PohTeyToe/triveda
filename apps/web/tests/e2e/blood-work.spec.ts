@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { test, expect, expectedBloodWork } from '../fixtures';
+import { expect, expectedBloodWork, test } from '../fixtures';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

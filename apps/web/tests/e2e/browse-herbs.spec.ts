@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 test.describe('browse herbs', () => {
   test('browse with herbs tab renders', async ({ page }) => {
@@ -10,7 +10,9 @@ test.describe('browse herbs', () => {
       await herbsTab.click();
       const ashwa = page.getByText(/ashwagandha|tulsi|turmeric|ginger/i).first();
       // Herbs may take a moment to render from the 700-entry Amidha dataset.
-      await expect(ashwa).toBeVisible({ timeout: 8_000 }).catch(() => undefined);
+      await expect(ashwa)
+        .toBeVisible({ timeout: 8_000 })
+        .catch(() => undefined);
     }
     await expect(page.locator('body')).toBeVisible();
   });

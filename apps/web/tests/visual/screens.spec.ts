@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 /**
  * Visual regression baselines for the core screens.
@@ -10,7 +10,10 @@ import { test, expect } from '../fixtures';
  * to absorb minor font-rendering drift between platforms.
  */
 
-const screens: Array<{ name: string; path: string; prep?: (page: Awaited<ReturnType<typeof test.info>>['project'] extends infer _ ? any : never) => Promise<void> }> = [
+const screens: Array<{
+  name: string;
+  path: string;
+}> = [
   { name: 'welcome', path: '/welcome' },
   { name: 'quick-start', path: '/quick-start' },
   { name: 'home', path: '/' },

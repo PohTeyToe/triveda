@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 test.describe('progressive daily profiling', () => {
   test('question appears on day 2', async ({ page, demoApi }) => {

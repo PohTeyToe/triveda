@@ -1,4 +1,4 @@
-import { test, expect, assertMobileLayout } from '../fixtures';
+import { assertMobileLayout, expect, test } from '../fixtures';
 
 test.describe('browse foods', () => {
   test('browse route renders', async ({ page }) => {

@@ -22,8 +22,8 @@
  * the outputs of a successful run.
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 type StepName = 'supabase' | 'railway' | 'vercel' | 'smoke';
 
@@ -174,13 +174,19 @@ async function provisionSupabase(state: DeployState, dryRun: boolean): Promise<D
     body: JSON.stringify({ name: 'vector' }),
   }).catch((e) => console.warn(`[supabase] pgvector enable: ${String(e)}`));
 
-  const keys = await supaFetch<Array<{ name: string; api_key: string }>>(`/projects/${ref}/api-keys`);
+  const keys = await supaFetch<Array<{ name: string; api_key: string }>>(
+    `/projects/${ref}/api-keys`,
+  );
   const anonKey = keys.find((k) => k.name === 'anon')?.api_key;
   const serviceRoleKey = keys.find((k) => k.name === 'service_role')?.api_key;
   const url = `https://${ref}.supabase.co`;
 
-  console.log('[supabase] run migrations manually: DATABASE_URL=... pnpm --filter @triveda/db migrate');
-  console.log('[supabase] run seeds manually:      DATABASE_URL=... pnpm --filter @triveda/db seed');
+  console.log(
+    '[supabase] run migrations manually: DATABASE_URL=... pnpm --filter @triveda/db migrate',
+  );
+  console.log(
+    '[supabase] run seeds manually:      DATABASE_URL=... pnpm --filter @triveda/db seed',
+  );
 
   state.supabase = {
     completed: true,
@@ -203,7 +209,8 @@ async function provisionRailway(state: DeployState, dryRun: boolean): Promise<De
     console.log('[railway] already provisioned, skipping');
     return state;
   }
-  if (!state.supabase.completed) throw new Error('[railway] refuses to run: supabase not provisioned');
+  if (!state.supabase.completed)
+    throw new Error('[railway] refuses to run: supabase not provisioned');
   console.log('[railway] provisioning...');
   if (dryRun) {
     console.log('[railway] dry-run: would railway up --service triveda-api');
@@ -273,11 +280,15 @@ async function provisionVercel(state: DeployState, dryRun: boolean): Promise<Dep
   if (!token) throw new Error('VERCEL_TOKEN is not set');
   const scope = 'abdallah-safis-projects-bae5f9c3';
 
-  await run('vercel', ['pull', '--yes', '--environment=production', `--token=${token}`, `--scope=${scope}`], {
-    VITE_API_URL: state.railway.serviceUrl,
-    VITE_SUPABASE_URL: state.supabase.url,
-    VITE_SUPABASE_ANON_KEY: state.supabase.anonKey,
-  });
+  await run(
+    'vercel',
+    ['pull', '--yes', '--environment=production', `--token=${token}`, `--scope=${scope}`],
+    {
+      VITE_API_URL: state.railway.serviceUrl,
+      VITE_SUPABASE_URL: state.supabase.url,
+      VITE_SUPABASE_ANON_KEY: state.supabase.anonKey,
+    },
+  );
   await run('vercel', ['build', '--prod', `--token=${token}`]);
   const output = await run('vercel', [
     'deploy',
@@ -305,11 +316,7 @@ async function verifyProduction(state: DeployState, dryRun: boolean): Promise<De
     console.log('[smoke] dry-run: would run scripts/smoke-production.ts');
     return state;
   }
-  const args = [
-    'run',
-    'scripts/smoke-production.ts',
-    `--api-url=${state.railway.serviceUrl}`,
-  ];
+  const args = ['run', 'scripts/smoke-production.ts', `--api-url=${state.railway.serviceUrl}`];
   if (state.vercel.productionUrl) args.push(`--web-url=${state.vercel.productionUrl}`);
   await run('bun', args);
 
@@ -327,7 +334,8 @@ function appendEnv(vars: Record<string, string>): void {
     if (idx > 0) map.set(line.slice(0, idx), line.slice(idx + 1));
   }
   for (const [k, v] of Object.entries(vars)) map.set(k, v);
-  const out = Array.from(map, ([k, v]) => `${k}=${v}`).join('\n') + '\n';
+  const body = Array.from(map, ([k, v]) => `${k}=${v}`).join('\n');
+  const out = `${body}\n`;
   writeFileSync(ENV_OUTPUT, out);
 }
 

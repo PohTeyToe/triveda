@@ -35,9 +35,7 @@ export async function expandWhyPanel(page: Page): Promise<void> {
     .or(page.locator('[data-testid="why-toggle"]'))
     .first();
   await button.click();
-  const anyTradition = page
-    .getByRole('heading', { name: /ayurveda|tcm|naturopathy/i })
-    .first();
+  const anyTradition = page.getByRole('heading', { name: /ayurveda|tcm|naturopathy/i }).first();
   await anyTradition.waitFor({ state: 'visible', timeout: 5_000 });
 }
 

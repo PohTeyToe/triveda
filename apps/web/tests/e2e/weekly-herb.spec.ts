@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 test.describe('weekly herb', () => {
   test('weekly-herb route renders', async ({ page }) => {

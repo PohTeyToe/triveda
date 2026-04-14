@@ -1,4 +1,4 @@
-import { test, expect, assertTealAccent } from '../fixtures';
+import { assertTealAccent, expect, test } from '../fixtures';
 
 test.describe('dark/light theme', () => {
   test('theme toggle changes background colour', async ({ page }) => {
@@ -10,14 +10,10 @@ test.describe('dark/light theme', () => {
     const has = (await toggle.count()) > 0;
     test.skip(!has, 'theme toggle not rendered');
 
-    const bgBefore = await page.evaluate(
-      () => getComputedStyle(document.body).backgroundColor,
-    );
+    const bgBefore = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
     await toggle.click();
     await page.waitForTimeout(200);
-    const bgAfter = await page.evaluate(
-      () => getComputedStyle(document.body).backgroundColor,
-    );
+    const bgAfter = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
     expect(bgAfter, 'background colour should differ after theme toggle').not.toBe(bgBefore);
   });
 
@@ -35,14 +31,16 @@ test.describe('dark/light theme', () => {
     test.skip(!has, 'theme toggle (data-testid) not rendered');
 
     await toggle.click();
-    const beforeReload = await page.evaluate(() =>
-      document.documentElement.classList.contains('light') ||
-      document.documentElement.getAttribute('data-theme'),
+    const beforeReload = await page.evaluate(
+      () =>
+        document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme'),
     );
     await page.reload();
-    const afterReload = await page.evaluate(() =>
-      document.documentElement.classList.contains('light') ||
-      document.documentElement.getAttribute('data-theme'),
+    const afterReload = await page.evaluate(
+      () =>
+        document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme'),
     );
     expect(afterReload).toBe(beforeReload);
   });

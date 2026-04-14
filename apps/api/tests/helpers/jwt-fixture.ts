@@ -1,4 +1,4 @@
-import { SignJWT, exportJWK, generateKeyPair, type JWK } from 'jose';
+import { type JWK, SignJWT, exportJWK, generateKeyPair } from 'jose';
 
 /**
  * JWT fixtures for auth middleware tests. Uses RS256 via `jose` so the

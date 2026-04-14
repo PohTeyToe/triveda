@@ -1,12 +1,11 @@
-import { test, expect, anxiousSequence } from '../fixtures';
+import { anxiousSequence, expect, test } from '../fixtures';
 
 test.describe('daily check-in', () => {
   test('check-in chips appear above daily card', async ({ page }) => {
     await page.goto('/');
-    const checkInRegion =
-      page.locator('[data-testid="daily-check-in"]').or(
-        page.getByRole('region', { name: /check.?in/i }),
-      );
+    const checkInRegion = page
+      .locator('[data-testid="daily-check-in"]')
+      .or(page.getByRole('region', { name: /check.?in/i }));
     const visible = (await checkInRegion.count()) > 0;
     test.skip(!visible, 'daily check-in widget not rendered on home yet');
     await expect(checkInRegion.first()).toBeVisible();

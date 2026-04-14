@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { expect, test } from '../fixtures';
 
 test.describe('seasonal transition card', () => {
   test('home loads without errors', async ({ page }) => {

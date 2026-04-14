@@ -1,4 +1,4 @@
-import { test, expect, anxiousSequence } from '../fixtures';
+import { anxiousSequence, expect, test } from '../fixtures';
 
 test.describe('triggered lifestyle recommendations', () => {
   test('breathwork card appears after 3 anxious check-ins', async ({ page, demoApi }) => {

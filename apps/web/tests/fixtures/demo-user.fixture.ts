@@ -102,6 +102,7 @@ function buildDemoApi(): DemoApi {
 }
 
 export const test = base.extend<DemoFixtures>({
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture signature requires destructured arg
   demoApi: async ({}, use) => {
     const api = buildDemoApi();
     await api.resetState();
