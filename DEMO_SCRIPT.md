@@ -1,13 +1,20 @@
 # Triveda Demo Script
 
+## Deployment URLs
+
+- **Frontend:** https://triveda-kappa.vercel.app (Vercel, `triveda` project, `feat/vedic-manuscript-ui` branch)
+- **Backend:** https://triveda-api-production.up.railway.app (Railway, Bun runtime, Supavisor pooler)
+- **Database:** Supabase `xadpvybhjjhbpdfxtrio` (AppYo account — use `SUPABASE_APPYO_ACCESS_TOKEN`)
+
 ## Pre-Demo Checklist (5 min before call)
 
-- [ ] Run `bun run smoke` against production
-- [ ] If green: use production (triveda.vercel.app)
+- [ ] Run `bun run smoke` against production (should be 17/17 or higher)
+- [ ] If green: use production (triveda-kappa.vercel.app)
 - [ ] If red: start local API (`cd apps/api && bun run dev`), point frontend at localhost
 - [ ] Open browser to demo URL
-- [ ] Log in as demo@triveda.app (password: triveda-demo-2026)
-- [ ] Reset demo state (Profile > Reset Demo)
+- [ ] In demo mode, AuthContext auto-authenticates as the seeded demo user (`00000000-0000-0000-0000-000000000001`)
+- [ ] If seed is stale: `bun run seed-demo` (idempotent)
+- [ ] Reset demo state (Profile > Reset Demo) to start at day 1
 - [ ] Close browser extensions that might interfere
 - [ ] Have this script on second screen
 
@@ -32,8 +39,8 @@
 ## Beat 3: Daily Card (1 min)
 
 **Action:** Navigate to Home.
-**Show:** One food, two sentences, date, season, weather.
-**Talking point:** "One food. Two sentences. Fifteen seconds."
+**Show:** One food, two sentences, date, season, weather. `DailyProfilingQuestion` card may render above if profile < 100% complete ("One quick question for you.").
+**Talking point:** "One food. Two sentences. Fifteen seconds. And one painless question a day refines your profile — 18 questions in 14 days, without anyone filling a form."
 **Sasha ref:** Mar 15: "People can't even do 3-second Instagram reels."
 
 ## Beat 4: Why Panel (1.5 min)
@@ -63,9 +70,9 @@
 
 ## Beat 8: Browse Foods (1 min) -- skip if running long
 
-**Action:** Navigate to Browse. Search "oatmeal". Filter. Tap detail.
-**Show:** Database depth, LLM-on-demand for unlisted foods.
-**Talking point:** "55 foods structured, long tail via LLM with honest labeling."
+**Action:** Navigate to Browse. Search "oatmeal". Filter. Tap detail. Optionally search a food not in the 55 DB to show "Generate entry via AI".
+**Show:** 55-food database, category filter chips, LLM-on-demand panel streams Ayurveda→TCM→Naturopathy properties with "Pending validation" badge.
+**Talking point:** "55 foods curated, long tail via LLM with honest labeling. Nothing hidden."
 
 ## Beat 9: Share (30 sec)
 
@@ -89,7 +96,26 @@ Beats 1-5 and 9 are non-negotiable.
 ## Live Failure Protocol
 
 If production is down during the call:
-1. **Localhost:** Start API locally, frontend points to localhost. Takes 30 seconds.
+1. **Localhost:** Start API locally (`cd apps/api && bun run dev`), frontend points to localhost. Takes 30 seconds.
 2. **Screenshots:** Static PNGs in a backup slide deck (Google Slides, ready to share-screen).
 
 The smoke test (`bun run smoke`) determines which layer to use. Run it 5 minutes before the call.
+
+## Current Feature Status (Apr 2026)
+
+| Feature | Status |
+|-|-|
+| Welcome → Quick-start → Constitution flow | Working end-to-end |
+| Daily Card + Why panel + 22-credit row | Working with real scoring engine |
+| Progressive daily profiling (day 2-14) | Mounted above Daily Card on home |
+| Cultural matching (cuisine bonus) | Wired post-score, capped at +0.10 |
+| Browse 55 foods + filter + search | Working |
+| LLM-on-demand food entry | Frontend panel + backend SSE (see /browse zero-result) |
+| Triggered outputs (poor-sleep-3-days, pitta streak) | Backend pattern detector + real triggers |
+| Weekly Herb (ashwagandha + 5 more) | Scored weekly, tradition perspectives |
+| Check-in (mood/energy/digestion/sleep) | Writes to DB, feeds pattern detector |
+| Face scan (simulated tradition analysis) | Mock MediaPipe — not real CV |
+| Blood work upload + parsing | PDF → biomarkers → daily scoring influence |
+| Share constitution via OG card | Satori-generated PNG, crawler-aware /c/:id |
+
+Face scan is the one demoable-but-simulated feature — flag it explicitly with the "Simulated" badge and move on.

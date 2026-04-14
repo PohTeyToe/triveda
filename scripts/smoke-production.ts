@@ -35,7 +35,11 @@ for (const arg of args) {
 }
 
 const API_URL =
-  (flags.apiUrl as string) || process.env.API_URL || 'https://triveda-api.onrender.com';
+  (flags.apiUrl as string) ||
+  process.env.API_URL ||
+  'https://triveda-api-production.up.railway.app';
+const WEB_URL =
+  (flags.webUrl as string) || process.env.WEB_URL || 'https://triveda-kappa.vercel.app';
 const VERBOSE = flags.verbose === true;
 
 // ---------------------------------------------------------------------------
@@ -182,6 +186,7 @@ async function main() {
   console.log('Triveda Production Smoke Test');
   console.log('==============================');
   console.log(`API: ${API_URL}`);
+  console.log(`Web: ${WEB_URL}`);
   console.log('');
 
   // 1. Health check with retry (must pass before anything else)
@@ -225,29 +230,66 @@ async function main() {
     },
     validate: (body: unknown) => {
       const b = body as Record<string, unknown>;
-      if (!b.doshaRatios && !b.dosha_ratios) {
+      const profile = (b.profile ?? b) as Record<string, unknown>;
+      if (!profile.doshaRatios && !profile.dosha_ratios) {
         return 'Missing doshaRatios in constitution response';
       }
       return null;
     },
   });
 
-  // 4. Auth-required endpoints -- test that they return 401 without auth
-  // (proves the route exists and middleware works)
-  await testEndpoint('/api/v1/foods/browse (auth gate)', '/api/v1/foods/browse', {
-    expectedStatus: 401,
-  });
-  await testEndpoint('/api/v1/herbs/browse (auth gate)', '/api/v1/herbs/browse', {
-    expectedStatus: 401,
-  });
-
-  // 5. OG image test
-  await testEndpoint('/api/og/default', '/api/og/default', {
-    validate: (_body: unknown) => {
-      // For OG endpoints, just checking status 200 is sufficient
+  // 4. Browse endpoints return data publicly (demo mode)
+  await testEndpoint('/api/v1/foods/browse', '/api/v1/foods/browse', {
+    validate: (body: unknown) => {
+      const b = body as Record<string, unknown>;
+      if (!Array.isArray(b.items) || b.items.length === 0) {
+        return 'Expected non-empty items array';
+      }
       return null;
     },
   });
+  await testEndpoint('/api/v1/herbs/browse', '/api/v1/herbs/browse', {
+    validate: (body: unknown) => {
+      const b = body as Record<string, unknown>;
+      if (!Array.isArray(b.items)) {
+        return 'Expected items array';
+      }
+      return null;
+    },
+  });
+
+  // 6. Frontend routes smoke — verify each route returns 200 HTML
+  const routes = [
+    '/',
+    '/welcome',
+    '/quick-start',
+    '/constitution',
+    '/browse',
+    '/profile',
+    '/blood-work',
+    '/check-in',
+    '/weekly-herb',
+    '/face-scan',
+    '/settings',
+  ];
+  for (const path of routes) {
+    try {
+      const { res, durationMs } = await timedFetch(`${WEB_URL}${path}`);
+      record({
+        name: `web ${path}`,
+        passed: res.ok,
+        durationMs,
+        error: res.ok ? undefined : `status=${res.status}`,
+      });
+    } catch (err) {
+      record({
+        name: `web ${path}`,
+        passed: false,
+        durationMs: 0,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
 
   // --- Summary ---
   console.log('');

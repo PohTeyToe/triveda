@@ -5,6 +5,7 @@ dist/
 .env.production
 .vercel/
 playwright-report/
+test-results/
 coverage/
 *.tsbuildinfo
 .turbo/
