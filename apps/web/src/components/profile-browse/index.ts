@@ -21,3 +21,4 @@ export { FoodCard } from './FoodCard';
 export { HerbCard } from './HerbCard';
 export { FilterSheet } from './FilterSheet';
 export { DetailLayout } from './DetailLayout';
+export { LlmExtendPanel } from './LlmExtendPanel';

@@ -13,6 +13,11 @@ function getBaseUrl(): string {
   return import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 }
 
+/** Public accessor for code that needs the raw base URL (e.g., SSE). */
+export function getApiBaseUrl(): string {
+  return getBaseUrl();
+}
+
 export function getApiClient(): Client {
   if (!_client) {
     _client = createClient(getBaseUrl());
