@@ -20,6 +20,8 @@
     "./src/llm/prompts/v1/schemas.js": "./src/llm/prompts/v1/schemas.ts",
     "./src/scoring/index.js": "./src/scoring/index.ts",
     "./src/scoring/types.js": "./src/scoring/types.ts",
+    "./src/scoring/modifiers/blood-work.js": "./src/scoring/modifiers/blood-work.ts",
+    "./src/scoring/modifiers/blood-work": "./src/scoring/modifiers/blood-work.ts",
     "./src/telemetry.js": "./src/telemetry.ts",
     "./src/*": "./src/*"
   },

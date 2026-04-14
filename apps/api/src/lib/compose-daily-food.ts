@@ -30,8 +30,10 @@ import type {
 import {
   filterCandidates,
   scoreCandidates,
+  scoreFood,
   selectTopN,
 } from '@triveda/shared/src/scoring/index.js';
+import { computeBloodWorkModifier } from '@triveda/shared/src/scoring/modifiers/blood-work.js';
 import type {
   FoodForScoring,
   ModifierValues,
@@ -43,6 +45,7 @@ import { and, eq, gte } from 'drizzle-orm';
 import { Temporal } from 'temporal-polyfill';
 import { createNonStreamingResponse, createSSEStream } from '../llm/index.js';
 import type { SSEOutputEvent } from '../llm/index.js';
+import { loadBiomarkerSnapshot } from './load-biomarker-snapshot.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -332,15 +335,33 @@ export async function composeDailyFood(params: DailyFoodParams): Promise<DailyFo
     today: date,
   };
 
-  const modifiers: ModifierValues = {
-    bloodWork: undefined,
-    culturalMatch: undefined,
-    dailyCheckIn: undefined,
-  };
+  // Load latest blood work snapshot + related food mappings once.
+  const { snapshot: biomarkerSnapshot, mappings: biomarkerFoodMappings } =
+    await loadBiomarkerSnapshot(db, userId);
 
   const filtered = filterCandidates(candidates, scoringContext);
-  const scored = scoreCandidates(filtered, profile, scoringContext, modifiers);
+  // Score per-food so the blood-work modifier can be computed against the
+  // specific candidate's mappings.
+  const scored = filtered
+    .map((food) => {
+      const bloodWork = biomarkerSnapshot
+        ? computeBloodWorkModifier(food.id, biomarkerSnapshot, biomarkerFoodMappings)
+        : undefined;
+      const perFoodModifiers: ModifierValues = {
+        bloodWork,
+        culturalMatch: undefined,
+        dailyCheckIn: undefined,
+      };
+      return scoreFood(food, profile, scoringContext, perFoodModifiers);
+    })
+    .sort((a, b) => {
+      const diff = b.totalScore - a.totalScore;
+      if (diff !== 0) return diff;
+      return a.foodId.localeCompare(b.foodId);
+    });
   const topN = selectTopN(scored, 1);
+  // Keep the batch helper referenced so tree-shaking / typecheck stays happy.
+  void scoreCandidates;
 
   if (topN.length === 0) {
     throw new Error('No foods available after filtering');
@@ -465,15 +486,33 @@ export async function* composeDailyFoodSSE(
     today: date,
   };
 
-  const modifiers: ModifierValues = {
-    bloodWork: undefined,
-    culturalMatch: undefined,
-    dailyCheckIn: undefined,
-  };
+  // Load latest blood work snapshot + related food mappings once.
+  const { snapshot: biomarkerSnapshot, mappings: biomarkerFoodMappings } =
+    await loadBiomarkerSnapshot(db, userId);
 
   const filtered = filterCandidates(candidates, scoringContext);
-  const scored = scoreCandidates(filtered, profile, scoringContext, modifiers);
+  // Score per-food so the blood-work modifier can be computed against the
+  // specific candidate's mappings.
+  const scored = filtered
+    .map((food) => {
+      const bloodWork = biomarkerSnapshot
+        ? computeBloodWorkModifier(food.id, biomarkerSnapshot, biomarkerFoodMappings)
+        : undefined;
+      const perFoodModifiers: ModifierValues = {
+        bloodWork,
+        culturalMatch: undefined,
+        dailyCheckIn: undefined,
+      };
+      return scoreFood(food, profile, scoringContext, perFoodModifiers);
+    })
+    .sort((a, b) => {
+      const diff = b.totalScore - a.totalScore;
+      if (diff !== 0) return diff;
+      return a.foodId.localeCompare(b.foodId);
+    });
   const topN = selectTopN(scored, 1);
+  // Keep the batch helper referenced so tree-shaking / typecheck stays happy.
+  void scoreCandidates;
 
   if (topN.length === 0) {
     throw new Error('No foods available after filtering');
