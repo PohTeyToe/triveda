@@ -18,7 +18,7 @@ export function DailyCardErrorFallback({ resetErrorBoundary }: FallbackProps) {
   return (
     <Card variant="elevated" className="max-w-md mx-auto text-center">
       <div className="p-6">
-        <h2 className="font-heading text-lg font-semibold text-white dark:text-white mb-2">
+        <h2 className="font-heading text-lg font-semibold text-cream dark:text-cream mb-2">
           We could not reach Triveda just now
         </h2>
         <p className="font-body text-sm text-neutral-400 dark:text-neutral-400 mb-4">
@@ -27,7 +27,7 @@ export function DailyCardErrorFallback({ resetErrorBoundary }: FallbackProps) {
         <button
           type="button"
           onClick={handleRetry}
-          className="font-body text-sm px-4 py-2 rounded-lg bg-teal text-white hover:bg-teal-soft transition-colors focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+          className="font-body text-sm px-4 py-2 rounded-lg bg-teal text-cream hover:bg-teal-soft transition-colors focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
         >
           Retry
         </button>

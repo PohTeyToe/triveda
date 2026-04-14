@@ -86,7 +86,7 @@ export function BloodWorkUploadScreen() {
             <button
               type="button"
               onClick={handleUpload}
-              className="w-full py-3 rounded-xl bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-teal-500 text-cream font-medium hover:bg-teal-600 transition-colors disabled:opacity-50"
               disabled={uploadMutation.isPending}
             >
               {uploadMutation.isPending

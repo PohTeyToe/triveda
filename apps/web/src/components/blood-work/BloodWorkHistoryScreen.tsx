@@ -18,7 +18,7 @@ export function BloodWorkHistoryScreen() {
         <Link
           to="/blood-work"
           search={{ view: 'upload', report: '' }}
-          className="px-4 py-2 rounded-xl bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors"
+          className="px-4 py-2 rounded-xl bg-teal-500 text-cream text-sm font-medium hover:bg-teal-600 transition-colors"
         >
           Upload New Report
         </Link>
@@ -63,7 +63,7 @@ export function BloodWorkHistoryScreen() {
           <Link
             to="/blood-work"
             search={{ view: 'upload', report: '' }}
-            className="inline-flex px-6 py-3 rounded-xl bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors"
+            className="inline-flex px-6 py-3 rounded-xl bg-teal-500 text-cream font-medium hover:bg-teal-600 transition-colors"
           >
             Upload Lab Report
           </Link>

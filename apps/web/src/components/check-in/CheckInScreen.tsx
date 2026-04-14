@@ -116,7 +116,7 @@ export function CheckInScreen() {
               onClick={() => setMood(opt.value)}
               className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 mood === opt.value
-                  ? 'bg-teal text-white shadow-md shadow-teal/20'
+                  ? 'bg-teal text-cream shadow-md shadow-teal/20'
                   : 'bg-white/5 border border-light/10 text-light/60 hover:border-teal/40 hover:text-teal'
               }`}
             >
@@ -140,7 +140,7 @@ export function CheckInScreen() {
               onClick={() => setEnergy(opt.value)}
               className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
                 energy === opt.value
-                  ? 'bg-teal text-white shadow-md shadow-teal/20'
+                  ? 'bg-teal text-cream shadow-md shadow-teal/20'
                   : 'bg-white/5 border border-light/10 text-light/60 hover:border-teal/40 hover:text-teal'
               }`}
             >
@@ -163,7 +163,7 @@ export function CheckInScreen() {
               onClick={() => setDigestion(opt.value)}
               className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 digestion === opt.value
-                  ? 'bg-teal text-white shadow-md shadow-teal/20'
+                  ? 'bg-teal text-cream shadow-md shadow-teal/20'
                   : 'bg-white/5 border border-light/10 text-light/60 hover:border-teal/40 hover:text-teal'
               }`}
             >
@@ -181,7 +181,7 @@ export function CheckInScreen() {
         type="button"
         onClick={handleSubmit}
         disabled={!canSubmit}
-        className="w-full py-3 rounded-xl bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full py-3 rounded-xl bg-teal-500 text-cream font-medium hover:bg-teal-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {submitting ? 'Saving...' : 'Save Check-in'}
       </button>

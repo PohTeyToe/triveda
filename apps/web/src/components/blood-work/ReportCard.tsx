@@ -172,7 +172,7 @@ export function ReportCard({ report }: ReportCardProps) {
               <button
                 type="button"
                 onClick={confirmDelete}
-                className="px-4 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                className="px-4 py-2 text-sm rounded-lg bg-red-500 text-cream hover:bg-red-600 transition-colors"
                 disabled={deleteMutation.isPending}
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
