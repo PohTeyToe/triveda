@@ -52,7 +52,7 @@ html {
 }
 
 /* ---- Light mode base ---- */
-body:not(.dark) {
+html:not(.dark) body {
   background-color: var(--color-light);
   color: var(--color-light-on-surface);
 }
