@@ -326,6 +326,16 @@ async function orchestrateMock(
     }),
   ]);
 
+  // Rewrite the templated "oats" fixtures to reflect the actually-selected
+  // food. Mock mode still has zero network cost; this just makes the fixed
+  // narration coherent with whichever food the scoring engine picked.
+  personalizeMockForFood(input, {
+    ayurveda: ayurvedaResult.output,
+    tcm: tcmResult.output,
+    naturopathy: naturopathyResult.output,
+    synthesis: synthesisResult.output,
+  });
+
   const endTime = performance.now();
 
   const creditSources = mergeCredits([
@@ -363,6 +373,63 @@ async function orchestrateMock(
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+function personalizeMockForFood(
+  input: DailyFoodInput,
+  outputs: {
+    ayurveda: AyurvedaOutput;
+    tcm: TCMOutput;
+    naturopathy: NaturopathyOutput;
+    synthesis: SynthesisOutput;
+  },
+): void {
+  const foodName = input.synthesis.selectedFoodName;
+  if (!foodName || foodName === 'oats') return;
+
+  const capitalized = foodName.charAt(0).toUpperCase() + foodName.slice(1);
+  const rewrite = (s: string) =>
+    s.replaceAll(/\boats\b/g, foodName).replaceAll(/\bOats\b/g, capitalized);
+
+  const props = input.ayurveda.foodProperties;
+  const mapRasa = (r: string) =>
+    ({
+      madhura: 'Madhura (sweet)',
+      amla: 'Amla (sour)',
+      lavana: 'Lavana (salty)',
+      katu: 'Katu (pungent)',
+      tikta: 'Tikta (bitter)',
+      kashaya: 'Kashaya (astringent)',
+    })[r.toLowerCase()] ?? `${r} (${r})`;
+  const mapVirya = (v: string) =>
+    ({ ushna: 'Ushna (heating)', sheeta: 'Sheeta (cooling)' })[v.toLowerCase()] ?? `${v} (neutral)`;
+  const mapVipaka = (v: string) =>
+    ({
+      madhura: 'Madhura (sweet post-digestive)',
+      amla: 'Amla (sour post-digestive)',
+      katu: 'Katu (pungent post-digestive)',
+    })[v.toLowerCase()] ?? `${v} post-digestive`;
+
+  outputs.ayurveda.rasa = mapRasa(props.rasa);
+  outputs.ayurveda.virya = mapVirya(props.virya);
+  outputs.ayurveda.vipaka = mapVipaka(props.vipaka);
+  outputs.ayurveda.doshaRationale = rewrite(outputs.ayurveda.doshaRationale);
+  outputs.ayurveda.plainEnglish = rewrite(outputs.ayurveda.plainEnglish);
+
+  const thermal = input.tcm.foodThermalNature;
+  outputs.tcm.thermal = thermal.charAt(0).toUpperCase() + thermal.slice(1);
+  outputs.tcm.organClock = rewrite(outputs.tcm.organClock);
+  outputs.tcm.plainEnglish = rewrite(outputs.tcm.plainEnglish);
+
+  outputs.naturopathy.plainEnglish = rewrite(outputs.naturopathy.plainEnglish);
+  outputs.naturopathy.pubmedCitations = outputs.naturopathy.pubmedCitations.map((c) => ({
+    ...c,
+    claim: rewrite(c.claim),
+  }));
+  outputs.naturopathy.honestGaps = outputs.naturopathy.honestGaps.map(rewrite);
+
+  outputs.synthesis.convergenceFraming = rewrite(outputs.synthesis.convergenceFraming);
+  outputs.synthesis.twoSentenceRationale = rewrite(outputs.synthesis.twoSentenceRationale);
+}
 
 function logTraditionFailure(
   logger: ReturnType<typeof getTelemetryLogger>,
